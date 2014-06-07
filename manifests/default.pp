@@ -48,15 +48,17 @@ exec { 'selinux-off-1':
 
 exec { 'selinux-off-2': 
 	command => "setenforce 0",
-	onlyif => "echo '! sestatus |grep disabled > /dev/null' |bash",
+	onlyif => "sestatus |grep -E \"enforcing\" > /dev/null",
 }
 
 service { 'httpd':
 	ensure => running,
 	enable => true,
+	require => Exec [ 'selinux-off-2' ],
 }
 
 service { 'mysql51-mysqld':
 	ensure => running,
 	enable => true,
+	require => Exec [ 'selinux-off-2' ],
 }
