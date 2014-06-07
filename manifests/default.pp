@@ -53,10 +53,10 @@ exec { 'selinux-off-2':
 
 service { 'httpd':
 	ensure => running,
-	start => true,
+	enable => true,
 }
 
 service { 'mysql51-mysqld':
 	ensure => running,
-	start => true,
+	enable => true,
 }
