@@ -1,5 +1,5 @@
 Exec {
-	path => '/usr/bin:/usr/sbin:/bin:/sbin',
+	path => '/usr/local/bin:/usr/local/sbin:/usr/bin:/usr/sbin:/bin:/sbin',
 }
 
 define yumgroup($ensure = "present", $optional = false) {
@@ -93,4 +93,27 @@ service { 'mysql51-mysqld':
 yumgroup { '"Development Tools"':
 	ensure => installed,
 	require => Exec [ 'selinux-off-2' ],
+}
+
+file { '/opt/local':
+	ensure => 'directory',
+}
+
+exec { 'composer':
+	command => 'curl -sS https://getcomposer.org/installer \
+			   | sudo php -d allow_url_fopen=On -- --filename=composer --install-dir=/usr/local/bin',
+	creates => '/usr/local/bin/composer',
+	require => Package [ $web ],
+}
+
+exec { 'drush':
+	command => 'git clone https://github.com/drush-ops/drush.git /opt/local/drush',
+	creates => '/opt/local/drush',
+	require => [ Exec [ 'composer' ], Package [ $commonTools ], ],
+}
+
+file { '/usr/local/bin/drush':
+	ensure => link,
+	target => '/opt/local/drush/drush',
+	require => Exec [ 'drush' ],
 }
