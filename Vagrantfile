@@ -1,5 +1,8 @@
 # -*- mode: ruby -*-
 # vi: set ft=ruby :
+require 'yaml'
+
+settings = YAML.load_file('config.yml')
 
 # Vagrantfile API/syntax version. Don't touch unless you know what you're doing!
 VAGRANTFILE_API_VERSION = "2"
@@ -22,7 +25,9 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   # within the machine from a port on the host machine. In the example below,
   # accessing "localhost:8080" will access port 80 on the guest machine.
   # config.vm.network "forwarded_port", guest: 80, host: 8080
-  config.vm.network "forwarded_port", guest: 80, host: 4567
+  settings['ports'].each do |item|
+    config.vm.network "forwarded_port", guest: item['vm'], host: item['local']
+  end
 
   # Create a private network, which allows host-only access to the machine
   # using a specific IP.
@@ -42,7 +47,9 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   # the path on the guest to mount the folder. And the optional third
   # argument is a set of non-required options.
   # config.vm.synced_folder "../data", "/vagrant_data"
-  config.vm.synced_folder "~/Sites/HID-Global", "/var/www/hid"
+  settings['shares'].each do |item|
+    config.vm.synced_folder item['local'], item['vm']
+  end
 
   # Provider-specific configuration so you can fine-tune various
   # backing providers for Vagrant. These expose provider-specific options.

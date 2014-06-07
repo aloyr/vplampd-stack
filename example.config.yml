@@ -1,0 +1,5 @@
+shares:
+  - {local: "~/Sites/HID-Global/hid", vm: "/var/www/hid"}
+
+ports:
+  - {local: 80, vm: 4567}
