@@ -29,7 +29,17 @@ package { $commonTools:
 	require => Package[ 'ius-release-1.0-11.ius.centos5' ],
 }
 
-$web = [ 'php53u', 'php53u-process', 'php53u-pdo', 'php53u-mysql', 'httpd', 'php53u-pecl-imagick' ]
+$web = [ 'httpd',
+		 'php53u',
+		 'php53u-mysql',
+		 'php53u-pdo',
+		 'php53u-pecl-apc',
+		 'php53u-pecl-imagick',
+		 'php53u-pecl-memcache',
+		 'php53u-pecl-redis',
+		 'php53u-pecl-xdebug',
+		 'php53u-process',
+	   ]
 package { $web:
 	ensure => installed,
 	require => Package[ 'ius-release-1.0-11.ius.centos5' ],
@@ -62,3 +72,4 @@ service { 'mysql51-mysqld':
 	enable => true,
 	require => [ Exec [ 'selinux-off-2' ], Package [ $database ] ],
 }
+
