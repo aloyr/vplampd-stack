@@ -62,6 +62,12 @@ package { $web:
 	require => Package[ 'ius-release-1.0-11.ius.centos5' ],
 }
 
+exec { 'php_ini':
+	command => "sed -i 's/allow_url_fopen = Off/allow_url_fopen = On/g' /etc/php.ini",
+	unless => 'grep "allow_url_fopen = On" /etc/php.ini',
+	require => Package [ $web ],
+}
+
 $database = [ 'mysql51-mysql-server', 'mysql51-mysql' ]
 package { $database:
 	ensure => installed,
@@ -103,13 +109,19 @@ exec { 'composer':
 	command => 'curl -sS https://getcomposer.org/installer \
 			   | sudo php -d allow_url_fopen=On -- --filename=composer --install-dir=/usr/local/bin',
 	creates => '/usr/local/bin/composer',
-	require => Package [ $web ],
+	require => [ Exec [ 'php_ini' ], Package [ $web ], ],
+}
+
+exec { 'pear_Console_Table':
+	command => 'pear install Console_Table',
+	unless => 'pear list | grep Console_Table > /dev/null',
+	require => [ Exec [ 'php_ini' ], Package [ $web ], ],
 }
 
 exec { 'drush':
-	command => 'git clone https://github.com/drush-ops/drush.git /opt/local/drush',
+	command => 'git clone -b 5.x https://github.com/drush-ops/drush.git /opt/local/drush',
 	creates => '/opt/local/drush',
-	require => [ Exec [ 'composer' ], Package [ $commonTools ], ],
+	require => [ Exec [ 'composer', 'pear_Console_Table' ], Package [ $commonTools ], ],
 }
 
 file { '/usr/local/bin/drush':
