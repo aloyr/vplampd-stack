@@ -2,6 +2,23 @@ Exec {
 	path => '/usr/bin:/usr/sbin:/bin:/sbin',
 }
 
+define yumgroup($ensure = "present", $optional = false) {
+   case $ensure {
+      present,installed: {
+         $pkg_types_arg = $optional ? {
+            true => "--setopt=group_package_types=optional,default,mandatory",
+            default => ""
+         }
+         exec { "Installing $name yum group":
+            command => "yum -y groupinstall $pkg_types_arg $name",
+            # unless => "yum -y groupinstall $pkg_types_arg $name --downloadonly",
+            onlyif => "echo '! yum grouplist $name | grep -E \"^Installed\" > /dev/null' |bash",
+            timeout => 600,
+         }
+      }
+   }
+}
+
 package { 'epel-release-5-4':
 	source => "http://dl.fedoraproject.org/pub/epel/5/x86_64/epel-release-5-4.noarch.rpm",
 	ensure => installed,
@@ -73,3 +90,7 @@ service { 'mysql51-mysqld':
 	require => [ Exec [ 'selinux-off-2' ], Package [ $database ] ],
 }
 
+yumgroup { '"Development Tools"':
+	ensure => installed,
+	require => Exec [ 'selinux-off-2' ],
+}
