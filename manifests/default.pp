@@ -54,11 +54,11 @@ exec { 'selinux-off-2':
 service { 'httpd':
 	ensure => running,
 	enable => true,
-	require => Exec [ 'selinux-off-2' ],
+	require => [ Exec [ 'selinux-off-2' ], Package [ $web ] ],
 }
 
 service { 'mysql51-mysqld':
 	ensure => running,
 	enable => true,
-	require => Exec [ 'selinux-off-2' ],
+	require => [ Exec [ 'selinux-off-2' ], Package [ $database ] ],
 }
