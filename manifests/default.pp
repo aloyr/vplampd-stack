@@ -147,3 +147,11 @@ file { '/usr/local/bin/drush':
 	target => '/opt/local/drush/drush',
 	require => Exec [ 'drush' ],
 }
+
+filehttp { 'set_prompt.sh':
+	ensure => present,
+	name => '/etc/profile.d/set_prompt.sh',
+	source => 'https://raw.githubusercontent.com/aloyr/system_config_files/master/set_prompt.sh',
+	mode => 0755,
+	require => Package [ $commonTools ],
+}
