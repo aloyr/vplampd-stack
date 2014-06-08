@@ -19,6 +19,24 @@ define yumgroup($ensure = "present", $optional = false) {
    }
 }
 
+define filehttp($ensure = "present", $mode = 0755, $source = "/dev/null") {
+	case $ensure {
+		present,installed: {
+			exec { "Downloading $name":
+				command => "wget --no-check-certificate -O $name -q $source",
+				creates => $name,
+				timeout => 600,
+			}
+			if $source != "/dev/null" {
+				file { $name:
+					mode => $mode,
+					require => Exec [ "Downloading $name" ],
+				}
+			}
+		}
+	}
+}
+
 package { 'epel-release-5-4':
 	source => "http://dl.fedoraproject.org/pub/epel/5/x86_64/epel-release-5-4.noarch.rpm",
 	ensure => installed,
