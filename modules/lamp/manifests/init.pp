@@ -17,6 +17,12 @@ class lamp {
 	   }
 	}
 
+	file { 'adjust_timezone':
+		replace => yes,
+		source => "/usr/share/zoneinfo/$zonefile",
+		path => "/etc/localtime",
+	}
+
 	package { 'epel-release-5-4':
 		source => "http://dl.fedoraproject.org/pub/epel/5/x86_64/epel-release-5-4.noarch.rpm",
 		ensure => installed,
