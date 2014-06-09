@@ -3,6 +3,7 @@
 require 'yaml'
 
 settings = YAML.load_file('config.yml')
+dnsServer = `scutil --dns|awk '$0 ~ /nameserver/ {printf $3; exit}'`
 
 # Vagrantfile API/syntax version. Don't touch unless you know what you're doing!
 VAGRANTFILE_API_VERSION = "2"
@@ -16,7 +17,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   config.vm.box = "centos56"
   config.vm.box_url = "https://dl.dropbox.com/u/7196/vagrant/CentOS-56-x64-packages-puppet-2.6.10-chef-0.10.6.box"
 
-  # Disable automatic box update checking. If you disable this, then
+  # Disable automatic box Update checking. If you disable this, then
   # boxes will only be checked for updates when the user runs
   # `vagrant box outdated`. This is not recommended.
   # config.vm.box_check_update = false
@@ -34,7 +35,8 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   # config.vm.network "private_network", ip: "192.168.33.10"
   config.vm.hostname = settings['hostname']
   config.hostsupdater.aliases = settings['aliases']
-  config.hostsupdater.remove_on_suspend = true
+  # config.hostsupdater.remove_on_suspend = true
+  config.vm.network "private_network", ip: settings['hostip']
 
   # Create a public network, which generally matched to bridged network.
   # Bridged networks make the machine appear as another physical device on
@@ -60,10 +62,13 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   #
   config.vm.provider "virtualbox" do |vb|
   #   # Don't boot with headless mode
-  #   vb.gui = true
+  #  vb.gui = true
   #
   #   # Use VBoxManage to customize the VM. For example to change memory:
-    vb.customize ["modifyvm", :id, "--memory", "4096"]
+    vb.memory = 4096
+    vb.cpus = 2
+    vb.customize ["modifyvm", :id, "--natdnshostresolver1", "on"]
+    vb.customize ["modifyvm", :id, "--natdnsproxy1", "on"]
   end
   #
   # View the documentation for the provider you're using for more
@@ -77,10 +82,10 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   config.vm.provision "puppet" do |puppet|
     # puppet.manifests_path = "manifests"
     # puppet.manifest_file  = "default.pp"
+    puppet.module_path  = "modules"
     puppet.facter = {
-      "vagrant" => "1" 
+      "vagrant" => "1",
+      "dnsserver" => dnsServer,
     }
-    # puppet.options = "--debug --verbose"
   end
-
 end
