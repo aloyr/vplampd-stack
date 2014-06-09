@@ -19,3 +19,6 @@ shares:
 
 ports:
   - {local: 4567, vm: 80}
+
+databases:
+  - {name: "example", user: "example", pass: "example"}
