@@ -86,13 +86,24 @@ class lamp {
 	service { 'httpd':
 		ensure => running,
 		enable => true,
-		require => [ Exec [ 'selinux-off-2' ], Package [ $web ] ],
+		require => [ Exec [ 'selinux-off-2', 'reset_webroot' ], Package [ $web ] ],
 	}
 
 	service { 'mysql51-mysqld':
 		ensure => running,
 		enable => true,
 		require => [ Exec [ 'selinux-off-2' ], Package [ $database ] ],
+	}
+
+	service { [ 'iptables', 'ip6tables' ]:
+		ensure => stopped,
+		enable => false,
+	}
+
+	exec { 'reset_webroot':
+		command => "sed -i 's/\\/var\\/www\\/html/$webrootparsed/g' /etc/httpd/conf/httpd.conf",
+		onlyif => "grep '/var/www/html'  /etc/httpd/conf/httpd.conf",
+		require => Package [ 'httpd' ],
 	}
 
 	# yumgroup { '"Development Tools"':

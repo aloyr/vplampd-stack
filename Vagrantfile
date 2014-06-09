@@ -86,6 +86,8 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     puppet.facter = {
       "vagrant" => "1",
       "dnsserver" => dnsServer,
+      "webroot" => settings['webroot'],
+      "webrootparsed" => settings['webroot'].gsub('/','\/'),
     }
   end
 end
