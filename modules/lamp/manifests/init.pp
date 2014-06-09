@@ -44,7 +44,7 @@ class lamp {
 		require => Package[ 'epel-release-5-4' ],
 	}
 
-	$commonTools = [ 'screen', 'vim-enhanced', 'git' ]
+	$commonTools = [ 'screen', 'vim-enhanced', 'nano', 'git' ]
 	package { $commonTools:
 		ensure => installed,
 		require => Package[ 'ius-release-1.0-11.ius.centos5' ],
