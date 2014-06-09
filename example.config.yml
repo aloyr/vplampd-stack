@@ -1,5 +1,21 @@
+hostname: "example.dev"
+hostip: 192.168.33.10
+webroot: "/var/www/example-site/example"
+
+aliases:
+  - "www.example.dev"
+  - "de.example.dev"
+  - "es.example.dev"
+  - "fr.example.dev"
+  - "it.example.dev"
+  - "ja.example.dev"
+  - "ko.example.dev"
+  - "pt-br.example.dev"
+  - "ru.example.dev"
+  - "zh-hans.example.dev"
+
 shares:
-  - {local: "~/Sites/HID-Global/hid", vm: "/var/www/hid"}
+  - {local: "~/Sites/example-site", vm: "/var/www/example-site"}
 
 ports:
-  - {local: 80, vm: 4567}
+  - {local: 4567, vm: 80}
