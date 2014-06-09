@@ -95,7 +95,8 @@ class lamp {
 		require => [ Exec [ 'selinux-off-2' ], Package [ $database ] ],
 	}
 
-	service { [ 'iptables', 'ip6tables' ]:
+	$firewall = [ 'iptables', 'ip6tables' ]
+	service { $firewall:
 		ensure => stopped,
 		enable => false,
 	}
