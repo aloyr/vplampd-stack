@@ -51,6 +51,7 @@ class lamp {
 	}
 
 	$web = [ 'httpd',
+			 'memcached',
 			 'php53u',
 			 'php53u-mysql',
 			 'php53u-pdo',
@@ -61,6 +62,7 @@ class lamp {
 			 'php53u-pecl-redis',
 			 'php53u-pecl-xdebug',
 			 'php53u-process',
+			 'redis',
 		   ]
 	package { $web:
 		ensure => installed,
