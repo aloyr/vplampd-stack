@@ -57,7 +57,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   # argument is a set of non-required options.
   # config.vm.synced_folder "../data", "/vagrant_data"
   settings['shares'].each do |item|
-    config.vm.synced_folder item['local'], item['vm']
+    config.vm.synced_folder item['local'], item['vm'], mount_options: ["dmode=777,fmode=666"]
   end
 
   # Provider-specific configuration so you can fine-tune various
