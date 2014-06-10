@@ -116,6 +116,12 @@ class lamp {
 		require => Package [ 'httpd' ],
 	}
 
+	drush::filehttp { 'memcached-init':
+		ensure => present,
+		source => 'https://gist.github.com/lboynton/3775818/raw/09e8eb92fa837dcbca4ec658742788f8dba83364/memcached-init.sh',
+		name => '/etc/init.d/memcached-init',	
+		mode => 0755,
+	}
 	# yumgroup { '"Development Tools"':
 	# 	ensure => installed,
 	# 	require => Exec [ 'selinux-off-2' ],
