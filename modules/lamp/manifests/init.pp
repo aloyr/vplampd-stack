@@ -53,7 +53,10 @@ class lamp {
 	$web = [ 'httpd',
 			 'memcached',
 			 'php53u',
+			 'php53u-cli',
+			 'php53u-gd',
 			 'php53u-mysql',
+			 'php53u-odbc',
 			 'php53u-pdo',
 			 'php53u-pear',
 			 'php53u-pecl-apc',
@@ -62,6 +65,7 @@ class lamp {
 			 'php53u-pecl-redis',
 			 'php53u-pecl-xdebug',
 			 'php53u-process',
+			 'php53u-xml',
 			 'redis',
 			 'varnish',
 		   ]
