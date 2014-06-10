@@ -63,6 +63,7 @@ class lamp {
 			 'php53u-pecl-xdebug',
 			 'php53u-process',
 			 'redis',
+			 'varnish',
 		   ]
 	package { $web:
 		ensure => installed,
