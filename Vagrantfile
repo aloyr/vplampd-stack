@@ -96,6 +96,9 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
       "zonefile" => settings['timezone'],
       "webroot" => settings['webroot'],
       "webrootparsed" => settings['webroot'].gsub('/','\/'),
+      # "dbname" => settings['databases']['name'],
+      # "dbuser" => settings['databases']['user'],
+      # "dbpass" => settings['databases']['pass'],
     }
   end
 end
