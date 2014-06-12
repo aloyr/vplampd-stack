@@ -39,10 +39,10 @@ class commontools {
 					unless => 'rpm -qi gpg-pubkey-1bb943db-511147a9 > /dev/null'
 				}
 				exec { 'mariadb_repo':
-					command => 'echo "[mariadb]" > /etc/yum.repos.d/MariaDB.repo
-								&& echo "name = MariaDB" >> /etc/yum.repos.d/MariaDB.repo
-								&& echo "baseurl = http://yum.mariadb.org/5.5/centos5-x86" >> /etc/yum.repos.d/MariaDB.repo
-								&& echo "gpgkey=https://yum.mariadb.org/RPM-GPG-KEY-MariaDB" >> /etc/yum.repos.d/MariaDB.repo
+					command => 'echo "[mariadb]" > /etc/yum.repos.d/MariaDB.repo \
+								&& echo "name = MariaDB" >> /etc/yum.repos.d/MariaDB.repo \
+								&& echo "baseurl = http://yum.mariadb.org/5.5/centos5-x86" >> /etc/yum.repos.d/MariaDB.repo \
+								&& echo "gpgkey=https://yum.mariadb.org/RPM-GPG-KEY-MariaDB" >> /etc/yum.repos.d/MariaDB.repo \
 								&& echo "gpgcheck=1" >> /etc/yum.repos.d/MariaDB.repo',
 					creates => '/etc/yum.repos.d/MariaDB.repo'
 				}
