@@ -22,5 +22,6 @@ class { 'pre_stage':
 	stage => 'pre',
 }
 
+include commonTools
 include lamp
 include drush
