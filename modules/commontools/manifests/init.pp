@@ -1,5 +1,5 @@
 class commontools {	
-	
+
 	define yumgroup($ensure = "present", $optional = false) {
 	   case $ensure {
 	      present,installed: {
@@ -37,6 +37,7 @@ class commontools {
 				exec { 'import_mariadb_rpm':
 					command => "rpm --import https://yum.mariadb.org/RPM-GPG-KEY-MariaDB",
 					unless => 'rpm -qi gpg-pubkey-1bb943db-511147a9 > /dev/null'
+				}
 			}
 		}
 	}
