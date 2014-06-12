@@ -76,7 +76,7 @@ class lamp {
 			require => [ Exec [ 'selinux-off-2' ], Package [ $database ] ],
 		}
 
-		if defined($webrootparsed) {
+		if defined('$webrootparsed') {
 			exec { 'reset_webroot':
 				command => "sed -i 's/\\/var\\/www\\/html/$webrootparsed/g' /etc/httpd/conf/httpd.conf",
 				onlyif => "grep '/var/www/html'  /etc/httpd/conf/httpd.conf",

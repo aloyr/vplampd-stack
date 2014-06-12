@@ -13,7 +13,7 @@ stage { 'pre':
 
 class pre_stage { 
 
-	if defined($vagrant) {
+	if defined('$vagrant') {
 		exec { 'reset_dns':
 			command => "echo 'nameserver $dnsserver' > /etc/resolv.conf",
 			onlyif => "echo '! grep $dnsserver /etc/resolv.conf' | bash",

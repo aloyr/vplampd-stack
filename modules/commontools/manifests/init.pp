@@ -84,7 +84,7 @@ class commontools {
 		onlyif => "sestatus |grep -E \"enforcing\" > /dev/null",
 	} 
 
-	if defined($vagrant) {
+	if defined('$vagrant') {
 		$firewall = [ 'iptables', 'ip6tables' ]
 		service { $firewall:
 			ensure => stopped,
