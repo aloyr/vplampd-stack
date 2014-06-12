@@ -2,7 +2,7 @@ Exec {
 	path => '/usr/local/bin:/usr/local/sbin:/usr/bin:/usr/sbin:/bin:/sbin',
 }
 
-if ! defined($vagrant) {
+if !defined($vagrant) {
 	$dnsserver = '8.8.8.8'
 	$zonefile = 'America/Chicago'
 }
