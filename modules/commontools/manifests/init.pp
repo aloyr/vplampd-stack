@@ -1,4 +1,21 @@
-class commontools {
+class commontools {	
+	
+	define yumgroup($ensure = "present", $optional = false) {
+	   case $ensure {
+	      present,installed: {
+	         $pkg_types_arg = $optional ? {
+	            true => "--setopt=group_package_types=optional,default,mandatory",
+	            default => ""
+	         }
+	         exec { "Installing $name yum group":
+	            command => "yum -y groupinstall $pkg_types_arg $name",
+	            # unless => "yum -y groupinstall $pkg_types_arg $name --downloadonly",
+	            onlyif => "echo '! yum grouplist $name | grep -E \"^Installed\" > /dev/null' |bash",
+	            timeout => 600,
+	         }
+	      }
+	   }
+	}
 
 	if $operatingsystem == "CentOS" {
 		case $operatingsystemmajrelease {
@@ -22,23 +39,6 @@ class commontools {
 					unless => 'rpm -qi gpg-pubkey-1bb943db-511147a9 > /dev/null'
 			}
 		}
-	}
-	
-	define yumgroup($ensure = "present", $optional = false) {
-	   case $ensure {
-	      present,installed: {
-	         $pkg_types_arg = $optional ? {
-	            true => "--setopt=group_package_types=optional,default,mandatory",
-	            default => ""
-	         }
-	         exec { "Installing $name yum group":
-	            command => "yum -y groupinstall $pkg_types_arg $name",
-	            # unless => "yum -y groupinstall $pkg_types_arg $name --downloadonly",
-	            onlyif => "echo '! yum grouplist $name | grep -E \"^Installed\" > /dev/null' |bash",
-	            timeout => 600,
-	         }
-	      }
-	   }
 	}
 
 	file { 'adjust_timezone':
