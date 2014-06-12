@@ -68,10 +68,14 @@ class lamp {
 			require => Package[ $web ],
 		}
 
+		$webservicesreq = defined('$webrootparsed') ? {
+			true => [ 'selinux-off-2', 'reset_webroot' ],
+			false => 'selinux-off-2',
+		}
 		service { 'httpd':
 			ensure => running,
 			enable => true,
-			require => [ Exec [ 'selinux-off-2', 'reset_webroot' ], Package [ $web ] ],
+			require => [ Exec [ $webservicesreq ], Package [ $web ] ],
 		}
 
 		service { $dbservice:
