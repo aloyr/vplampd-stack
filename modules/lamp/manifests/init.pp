@@ -38,10 +38,9 @@ class lamp {
 					 'php55u-odbc',
 					 'php55u-pdo',
 					 'php55u-pear',
-					 'php55u-pecl-apc',
+					 'php55u-pecl-apcu',
 					 'php55u-pecl-imagick',
 					 'php55u-pecl-memcache',
-					 'php55u-pecl-redis',
 					 'php55u-pecl-xdebug',
 					 'php55u-process',
 					 'php55u-xml',
@@ -61,6 +60,19 @@ class lamp {
 			command => "sed -i 's/allow_url_fopen = Off/allow_url_fopen = On/g' /etc/php.ini",
 			unless => 'grep "allow_url_fopen = On" /etc/php.ini',
 			require => Package [ $web ],
+		}
+
+		if $operatingsystemmajrelease == 6 {
+			exec { 'install_redis_pecl':
+				command => 'pecl install redis',
+				creates => '/usr/lib64/php/modules/',
+				require => Package [ $web ],
+			} 
+			exec { 'create_redis_ini':
+				command => 'echo "extension=redis.so" > /etc/php.d/redis.ini',
+				creates => '/etc/php.d/redis.ini',
+				require => Package [ 'install_redis_pecl' ],
+			} 
 		}
 
 		package { $database:
