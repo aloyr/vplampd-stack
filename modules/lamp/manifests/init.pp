@@ -1,7 +1,7 @@
 class lamp {
 
 	if $operatingsystem == 'CentOS' {
-		case $operatingsystemmajversion {
+		case $operatingsystemmajrelease {
 			5: {
 				$web = [ 'httpd',
 					 'memcached',
