@@ -48,7 +48,7 @@ class lamp {
 					 'varnish',
 				   ]
 				$database = [ 'MariaDB-server', 'MariaDB-client' ]
-				$dbservice = 'mysqld'
+				$dbservice = 'mysql'
 			}
 		}
 		package { $web:
