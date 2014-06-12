@@ -71,7 +71,7 @@ class lamp {
 			exec { 'create_redis_ini':
 				command => 'echo "extension=redis.so" > /etc/php.d/redis.ini',
 				creates => '/etc/php.d/redis.ini',
-				require => Package [ 'install_redis_pecl' ],
+				require => Exec [ 'install_redis_pecl' ],
 			} 
 		}
 
