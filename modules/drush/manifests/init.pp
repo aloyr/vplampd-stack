@@ -26,13 +26,13 @@ class drush {
 		command => 'curl -sS https://getcomposer.org/installer \
 				   | sudo php -d allow_url_fopen=On -- --filename=composer --install-dir=/usr/local/bin',
 		creates => '/usr/local/bin/composer',
-		require => [ Exec [ 'php_ini' ], Package [ 'php53u-pear' ], ],
+		require => [ Exec [ 'php_ini' ], Package [ $lamp::pear ], ],
 	}
 
 	exec { 'pear_Console_Table':
 		command => 'pear install Console_Table',
 		unless => 'pear list | grep Console_Table > /dev/null',
-		require => [ Exec [ 'php_ini' ], Package [ 'php53u-pear' ], ],
+		require => [ Exec [ 'php_ini' ], Package [ $lamp::pear ], ],
 	}
 
 	exec { 'drush':

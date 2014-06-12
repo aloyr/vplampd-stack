@@ -1,6 +1,10 @@
 class lamp {
 
 	if $operatingsystem == 'CentOS' {
+		$pear = $operatingsystemmajrelease ? {
+			'5' => 'php53u-pear',
+			'6' => 'php55u-pear',
+		}
 		case $operatingsystemmajrelease {
 			5: {
 				$web = [ 'httpd',
@@ -28,19 +32,19 @@ class lamp {
 			6: {
 				$web = [ 'httpd',
 					 'memcached',
-					 'phpc55u',
-					 'phpc55u-cli',
-					 'phpc55u-gd',
-					 'phpc55u-odbc',
-					 'phpc55u-pdo',
-					 'phpc55u-pear',
-					 'phpc55u-pecl-apc',
-					 'phpc55u-pecl-imagick',
-					 'phpc55u-pecl-memcache',
-					 'phpc55u-pecl-redis',
-					 'phpc55u-pecl-xdebug',
-					 'phpc55u-process',
-					 'phpc55u-xml',
+					 'php55u',
+					 'php55u-cli',
+					 'php55u-gd',
+					 'php55u-odbc',
+					 'php55u-pdo',
+					 'php55u-pear',
+					 'php55u-pecl-apc',
+					 'php55u-pecl-imagick',
+					 'php55u-pecl-memcache',
+					 'php55u-pecl-redis',
+					 'php55u-pecl-xdebug',
+					 'php55u-process',
+					 'php55u-xml',
 					 'redis',
 					 'varnish',
 				   ]
