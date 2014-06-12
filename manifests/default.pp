@@ -2,6 +2,11 @@ Exec {
 	path => '/usr/local/bin:/usr/local/sbin:/usr/bin:/usr/sbin:/bin:/sbin',
 }
 
+if ! defined($vagrant) {
+	$dnsserver = '8.8.8.8'
+	$zonefile = 'America/Chicago'
+}
+
 stage { 'pre':
 	before => Stage[ 'main' ],
 }
@@ -23,6 +28,7 @@ class pre_stage {
 class { 'pre_stage':
 	stage => 'pre',
 }
+
 
 include commonTools
 include lamp
