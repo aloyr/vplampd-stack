@@ -17,6 +17,9 @@ class commontools {
 				$remi_source = "http://rpms.famillecollet.com/enterprise/remi-release-6.rpm"
 				$ius_package = "ius-release-1.0-11.ius.centos6"
 				$ius_source = "http://dl.iuscommunity.org/pub/ius/stable/CentOS/6/x86_64/ius-release-1.0-11.ius.centos6.noarch.rpm"
+				exec { 'import_mariadb_rpm':
+					command => "rpm --import https://yum.mariadb.org/RPM-GPG-KEY-MariaDB",
+					unless => 'rpm -qi gpg-pubkey-1bb943db-511147a9 > /dev/null'
 			}
 		}
 	}
