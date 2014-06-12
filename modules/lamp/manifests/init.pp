@@ -21,7 +21,7 @@ class lamp {
 		   ]
 	package { $web:
 		ensure => installed,
-		require => Package[ 'ius' ],
+		require => Package[ $commontools::ius_package ],
 	}
 
 	exec { 'php_ini':
