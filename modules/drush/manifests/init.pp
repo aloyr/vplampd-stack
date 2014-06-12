@@ -24,7 +24,7 @@ class drush {
 
 	exec { 'composer':
 		command => 'curl -sS https://getcomposer.org/installer \
-				   | sudo php -d allow_url_fopen=On -- --filename=composer --install-dir=/usr/local/bin',
+				   | php -d allow_url_fopen=On -- --filename=composer --install-dir=/usr/local/bin',
 		creates => '/usr/local/bin/composer',
 		require => [ Exec [ 'php_ini' ], Package [ $lamp::pear ], ],
 	}
