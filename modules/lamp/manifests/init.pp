@@ -40,6 +40,7 @@ class lamp {
 					 'php55u-pear',
 					 'php55u-pecl-apcu',
 					 'php55u-pecl-imagick',
+					 'php55u-pecl-jsonc',
 					 'php55u-pecl-memcache',
 					 'php55u-pecl-xdebug',
 					 'php55u-process',
