@@ -3,8 +3,7 @@ class nodejs {
 		$nodePackages = [ 'nodejs', 'npm' ]
 		package { $nodePackages:
 			ensure => installed,
-			require => $commonTools::epel_package,
+			require => Package [ $commonTools::epel_package ],
 		}
-
 	}
 }
