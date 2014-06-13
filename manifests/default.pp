@@ -33,4 +33,4 @@ class { 'pre_stage':
 include commonTools
 include lamp
 include drush
-include node
+include nodejs
