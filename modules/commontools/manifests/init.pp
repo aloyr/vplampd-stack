@@ -77,7 +77,7 @@ class commontools {
 		require => Package[ $epel_package ],
 	}
 
-	$commonTools = [ 'screen', 'vim-enhanced', 'nano', 'git' ]
+	$commonTools = [ 'screen', 'vim-enhanced', 'nano', 'git', 'updatedb', 'which', 'ssmtp' ]
 	package { $commonTools:
 		ensure => installed,
 		require => Package[ $ius_package ],
@@ -100,5 +100,4 @@ class commontools {
 			enable => false,
 		}
 	}
-
 }
