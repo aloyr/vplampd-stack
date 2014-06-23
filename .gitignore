@@ -2,3 +2,5 @@
 .idea*
 .vagrant
 config.yml
+data/*
+!data/README.md
