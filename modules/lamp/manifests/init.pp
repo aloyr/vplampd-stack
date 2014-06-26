@@ -97,13 +97,28 @@ class lamp {
 			require => [ Exec [ 'selinux-off-2' ], Package [ $database ] ],
 		}
 
-		# if defined('$database') {
-		# 	exec { 'setup_db':
-		# 		command => "echo 'create database $dbname' | mysql",
-		# 		unless => 'echo "use information_schema"|mysql -BN 2> /dev/null',
-		# 		require => Service [ $dbservice ],
-		# 	}
-		# }
+		if defined('$dbname') {
+			exec { 'setup_db':
+				command => "echo 'create database $dbname' | mysql", 
+				unless => 'echo "use hid"|mysql -BN 2> /dev/null',
+				require => Service [ $dbservice ],
+			}
+			if defined('$dbuser') {
+				exec { 'setup_dbuser': 
+					command => "echo \"grant all on $dbname.* to $dbuser@localhost identified by '$dbpass'\"| mysql",
+					unless => "echo \"select user from mysql.user where host = 'localhost' and user = 'hid'\"| \
+					           mysql -BN -uroot| grep hid &> /dev/null ",
+					require => Exec [ 'setup_db' ],
+				}	
+				if defined('$dbfile') {
+					exec { 'setup_dbfile':
+						command => "mysql $dbname < /vagrant/data/$dbfile",
+						unless => "echo 'select username from users' | mysql hid &> /dev/null",
+						require => Exec [ 'setup_dbuser' ],
+					}
+				}
+			}
+		}
 
 		if defined('$webrootparsed') {
 			exec { 'reset_webroot':
