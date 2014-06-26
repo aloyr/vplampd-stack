@@ -97,6 +97,14 @@ class lamp {
 			require => [ Exec [ 'selinux-off-2' ], Package [ $database ] ],
 		}
 
+		# if defined('$database') {
+		# 	exec { 'setup_db':
+		# 		command => "echo 'create database $dbname' | mysql",
+		# 		unless => 'echo "use information_schema"|mysql -BN 2> /dev/null',
+		# 		require => Service [ $dbservice ],
+		# 	}
+		# }
+
 		if defined('$webrootparsed') {
 			exec { 'reset_webroot':
 				command => "sed -i 's/\\/var\\/www\\/html/$webrootparsed/g' /etc/httpd/conf/httpd.conf",
