@@ -125,7 +125,7 @@ class lamp {
 				if defined('$dbfile') {
 					exec { 'setup_dbfile':
 						command => "mysql $dbname < /vagrant/data/$dbfile",
-						unless => "echo 'select username from users' | mysql hid &> /dev/null",
+						unless => "echo 'select name from users' | mysql hid &> /dev/null",
 						require => Exec [ 'setup_dbuser' ],
 					}
 				}
