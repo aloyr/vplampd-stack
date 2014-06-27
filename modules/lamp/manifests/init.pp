@@ -91,6 +91,18 @@ class lamp {
 			require => [ Exec [ $webservicesreq ], Package [ $web ] ],
 		}
 
+		exec { 'memcached_config':
+			command => "sed -i 's/CACHESIZE=\".*\"/CACHESIZE=\"512\"/g' /etc/sysconfig/memcached",
+			unless => 'grep "CACHESIZE=\"512\"" /etc/sysconfig/memcached &> /dev/null',
+			require => Service [ 'httpd' ],
+	  }
+
+		service { 'memcached':
+			ensure => running,
+			enable => true,
+			require => Exec [ 'memcached_config' ],
+		}
+
 		service { $dbservice:
 			ensure => running,
 			enable => true,
