@@ -105,6 +105,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
       "dbuser" => settings['database']['user'],
       "dbpass" => settings['database']['pass'],
       "dbfile" => settings['database']['file'],
+      "dbpost" => settings['database']['post'],
     }
   end
 end
