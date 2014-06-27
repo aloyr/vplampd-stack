@@ -130,6 +130,7 @@ class lamp {
 					}
 					exec { 'setup_dbpost':
 						command => "mysql $dbname < /vagrant/data/$dbpost",
+						unless => "",
 						require => Exec [ 'setup_dbfile' ],
 					}
 				}
