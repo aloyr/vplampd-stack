@@ -18,7 +18,12 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   config.vm.box_url = "https://dl.dropbox.com/u/7196/vagrant/CentOS-56-x64-packages-puppet-2.6.10-chef-0.10.6.box"
 
   if Vagrant.has_plugin?("vagrant-cachier")
-    config.cache.scope = :box
+    # config.cache.scope = :box
+
+    # config.cache.synced_folder_opts = {
+    #   type: :nfs,
+    #   mount_options: ['rw', 'vers=3', 'tcp', 'nolock']
+    # }
   end
 
   # Disable automatic box Update checking. If you disable this, then
