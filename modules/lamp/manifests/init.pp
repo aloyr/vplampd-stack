@@ -128,10 +128,12 @@ class lamp {
 						unless => "echo 'select name from users' | mysql hid &> /dev/null",
 						require => Exec [ 'setup_dbuser' ],
 					}
-					exec { 'setup_dbpost':
-						command => "mysql $dbname < /vagrant/data/$dbpost",
-						unless => "",
-						require => Exec [ 'setup_dbfile' ],
+					if defined('$dbpost') {
+						exec { 'setup_dbpost':
+							command => "mysql $dbname < /vagrant/data/$dbpost",
+							unless => "",
+							require => Exec [ 'setup_dbfile' ],
+						}
 					}
 				}
 			}
