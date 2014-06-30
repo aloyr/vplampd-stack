@@ -1,5 +1,4 @@
 class commontools {	
-
 	define yumgroup($ensure = "present", $optional = false) {
 	   case $ensure {
 	      present,installed: {

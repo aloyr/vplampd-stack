@@ -119,5 +119,8 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
       dbfile = "data/#{puppet.facter['dbfile']}"
       abort "Database file #{dbfile} not found." if not Pathname(dbfile).exist?
     end 
+    if settings['languages'] != nil
+      puppet.facter['languages'] = settings['languages'].to_yaml
+    end
   end
 end
