@@ -5,15 +5,17 @@ webroot: "/var/www/example-site/example"
 
 aliases:
   - "www.example.dev"
-  - "de.example.dev"
-  - "es.example.dev"
-  - "fr.example.dev"
-  - "it.example.dev"
-  - "ja.example.dev"
-  - "ko.example.dev"
-  - "pt-br.example.dev"
-  - "ru.example.dev"
-  - "zh-hans.example.dev"
+
+languages:
+  - {"de": "de.example.dev"}
+  - {"es": "es.example.dev"}
+  - {"fr": "fr.example.dev"}
+  - {"it": "it.example.dev"}
+  - {"ja": "ja.example.dev"}
+  - {"ko": "ko.example.dev"}
+  - {"pt-br": "pt-br.example.dev"}
+  - {"ru": "ru.example.dev"}
+  - {"zh-hans": "zh-hans.example.dev"}
 
 shares:
   - {local: "~/Sites/example-site", vm: "/var/www/example-site"}
@@ -21,4 +23,4 @@ shares:
 ports:
   - {local: 4567, vm: 80}
 
-databases: {name: "example", user: "example", pass: "example", file: "example.sql"}
+database: {name: "example", user: "example", pass: "example", file: "example.sql"}
