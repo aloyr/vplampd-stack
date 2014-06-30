@@ -1,7 +1,9 @@
 # -*- mode: ruby -*-
 # vi: set ft=ruby :
 require 'yaml'
+require 'pathname'
 
+abort "ERROR: config.yml file missing." if not Pathname('config.yml').exist?
 settings = YAML.load_file('config.yml')
 dnsServer = `scutil --dns|awk '$0 ~ /nameserver/ {printf $3; exit}'`
 
@@ -43,6 +45,14 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   # using a specific IP.
   # config.vm.network "private_network", ip: "192.168.33.10"
   config.vm.hostname = settings['hostname']
+  if defined? settings['languages']
+    settings['languages'].each do |item|
+      # settings['aliases'].merge!(item[1])
+      item.each do |lang|
+        settings['aliases'].concat([lang[1]])
+      end
+    end
+  end
   config.hostsupdater.aliases = settings['aliases']
   # config.hostsupdater.remove_on_suspend = true
   config.vm.network "private_network", ip: settings['hostip']
@@ -101,11 +111,13 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
       "zonefile" => settings['timezone'],
       "webroot" => settings['webroot'],
       "webrootparsed" => settings['webroot'].gsub('/','\/'),
-      "dbname" => settings['database']['name'],
-      "dbuser" => settings['database']['user'],
-      "dbpass" => settings['database']['pass'],
-      "dbfile" => settings['database']['file'],
-      "dbpost" => settings['database']['post'],
     }
+    settings['database'].each do |item|
+      puppet.facter.merge!({"db#{item[0]}" => item[1]})
+    end
+    if puppet.facter['dbfile'] != nil
+      dbfile = "data/#{puppet.facter['dbfile']}"
+      abort "Database file #{dbfile} not found." if not Pathname(dbfile).exist?
+    end 
   end
 end
