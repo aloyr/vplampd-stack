@@ -11,6 +11,7 @@ module Puppet::Parser::Functions
 					resultado = "#{resultado} UPDATE languages set domain = '#{item[1]}' WHERE language = '#{item[0]}';\n"
 				end
 			end
+			File.open('/vagrant/data/insertlanguages.sql','w') {|f| f.write(resultado)}
 			"echo \"#{resultado}\" | mysql #{dbname}"
 		end
 	end

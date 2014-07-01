@@ -58,8 +58,46 @@ class lamp {
 		}
 
 		exec { 'php_ini':
-			command => "sed -i 's/allow_url_fopen = Off/allow_url_fopen = On/g' /etc/php.ini",
+			command => "sed -i \\
+						    -e 's/^\\(allow_url_fopen\\) = Off/\\1 = On/g' \\
+						    -e 's/^; \\(date.timezone\\) =.*/\\1 = America\\/Chicago/g' \\
+						    -e 's/^\\(display.*_errors\\) = Off/\\1 = On/g' \\
+						    -e 's/^\\(error_reporting\\) = .*/\\1 = E_ALL | E_STRICT/g' \\
+						    -e 's/^\\(html_errors\\) = Off/\\1 = On/g' \\
+						    -e 's/^\\(log_errors\\) = Off/\\1 = On/g' \\
+						    -e 's/^\\(memory_limit\\) = [0-9]+M/\\1 = 2048M/g' \\
+						    -e 's/^\\(post_max_size\\) = [0-9]\\+M/\\1 = 80M/g' \\
+						    -e 's/^\\(track_errors\\) = Off/\\1 = On/g' \\
+						    -e 's/^\\(upload_max_filesize\\) = [0-9]\\+M/\\1 = 20M/g' \\
+						    /etc/php.ini",
 			unless => 'grep "allow_url_fopen = On" /etc/php.ini',
+			require => Package [ $web ],
+		}
+
+		exec { 'apc_ini':
+			command => "sed -i \\
+						    -e 's/^;\\(apc.enabled\\)=.*/\\1=1/g' \\
+						    -e 's/^;\\(apc.shm_size\\)=.*/\\1=256M/g' \\
+						    /etc/php.d/apc.ini",
+			unless => 'grep "^apc.enabled=1" /etc/php.d/apc.ini',
+			require => Package [ $web ],
+		}
+
+		commontools::yumgroup { '"Development Tools"':
+			ensure => installed,
+			require => Exec [ 'selinux-off-2' ],
+		} ~>
+		exec { 'xhprof_setup':
+			command => 'pecl install xhprof-beta ; echo "extension=xhprof.so" > /etc/php.d/xhprof.ini',
+			creates => '/etc/php.d/xhprof.ini',
+		}
+
+		exec { 'xdebug_setup': 
+			command => 'echo "xdebug.remote_enable=1" >> /etc/php.d/xdebug.ini ; \
+						echo "xdebug.remote_connect_back=1" >> /etc/php.d/xdebug.ini ; \
+						echo "xdebug.remote_port=9000" >> /etc/php.d/xdebug.ini ; \
+						echo "xdebug.remote_autostart=1" >> /etc/php.d/xdebug.ini',
+			unless => 'grep "remote_enable" /etc/php.d/xdebug.ini',
 			require => Package [ $web ],
 		}
 
@@ -88,7 +126,7 @@ class lamp {
 		service { 'httpd':
 			ensure => running,
 			enable => true,
-			require => [ Exec [ $webservicesreq ], Package [ $web ] ],
+			require => [ Exec [ $webservicesreq, php_ini, apc_ini ], Package [ $web ] ],
 		}
 
 		exec { 'memcached_config':
@@ -129,10 +167,9 @@ class lamp {
 						require => Exec [ 'setup_dbuser' ],
 					}
 					if defined('$languages') {
-						$cmd = insertlanguages()
 						exec { 'setup_languages':
-							command => "$cmd > /tmp/test.txt",
-							# unless => "",
+							command => insertlanguages(),
+							creates => '/vagrant/data/insertlanguages.sql',
 							require => Exec [ 'setup_dbfile' ],
 						}
 					}
@@ -154,10 +191,6 @@ class lamp {
 			name => '/etc/init.d/memcached-init',	
 			mode => 0755,
 		}
-		# yumgroup { '"Development Tools"':
-		# 	ensure => installed,
-		# 	require => Exec [ 'selinux-off-2' ],
-		# }
 		
 	}
 
