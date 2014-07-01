@@ -74,6 +74,47 @@ class lamp {
 			require => Package [ $web ],
 		}
 
+
+
+		file { 'mysql_folder':
+			path => '/etc/mysql',
+			ensure => directory,
+		} ~>
+		file { 'mysql_optimizations':
+			path => '/etc/mysql/mysql_optimizations.cnf',
+			ensure => file,
+			content => template('lamp/mysql_optimizations.erb'),
+		}
+
+		exec { 'mysql_setup': 
+			command => "CNFLoc=`grep 'cnf' /etc/init.d/my*|awk '{print $3}'`; \\ 
+						echo \"[mysqld]\" >> $CNFLoc; \
+						echo \"key_buffer = 16M\" >> $CNFLoc; \
+						echo \"max_allowed_packet = 16M\" >> $CNFLoc; \
+						echo \"table_cache = 64\" >> $CNFLoc; \
+						echo \"sort_buffer_size = 512K\" >> $CNFLoc; \
+						echo \"net_buffer_length = 8K\" >> $CNFLoc; \
+						echo \"read_buffer_size = 256K\" >> $CNFLoc; \
+						echo \"read_rnd_buffer_size = 512K\" >> $CNFLoc; \
+						echo \"myisam_sort_buffer_size = 8M\" >> $CNFLoc; \
+						echo \"\" >> $CNFLoc; \
+						echo \"table_cache = 8192\" >> $CNFLoc; \
+						echo \"table_open_cache = 8192\" >> $CNFLoc; \
+						echo \"table_definition_cache = 8192\" >> $CNFLoc; \
+						echo \"query_cache_size = 512M\" >> $CNFLoc; \
+						echo \"thread_cache_size = 5\" >> $CNFLoc; \
+						echo \"innodb_thread_concurrency = 5\" >> $CNFLoc; \
+						echo \"innodb_buffer_pool_size = 1G\" >> $CNFLoc; \
+						echo \"key_buffer_size = 50M\" >> $CNFLoc; \
+						echo \"log-slow-queries = /var/logs/mysql_slow_queries.log\" >> $CNFLoc; \
+						echo \"innodb_flush_log_at_trx_commit = 2\" >> $CNFLoc; \
+						echo \"innodb_flush_method=O_DIRECT\" >> $CNFLoc; \
+						echo \"default-storage-engine=InnoDB\" >> $CNFLoc; \
+						echo \"default-table-type=InnoDB\" >> $CNFLoc;",
+			unless => "CNFLoc=`grep 'cnf' /etc/init.d/my*|awk '{print $3}'`;grep default-table-type $CNFLoc",
+			require => Package [ $database ],
+		}
+
 		exec { 'apc_ini':
 			command => "sed -i \\
 						    -e 's/^;\\(apc.enabled\\)=.*/\\1=1/g' \\
