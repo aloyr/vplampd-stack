@@ -128,10 +128,11 @@ class lamp {
 						unless => "echo 'select name from users' | mysql hid &> /dev/null",
 						require => Exec [ 'setup_dbuser' ],
 					}
-					if defined('$dbpost') {
-						exec { 'setup_dbpost':
-							command => "mysql $dbname < /vagrant/data/$dbpost",
-							unless => "",
+					if defined('$languages') {
+						$cmd = insertlanguages()
+						exec { 'setup_languages':
+							command => "$cmd > /tmp/test.txt",
+							# unless => "",
 							require => Exec [ 'setup_dbfile' ],
 						}
 					}

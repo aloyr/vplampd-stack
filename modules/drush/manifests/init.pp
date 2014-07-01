@@ -1,5 +1,4 @@
 class drush {
-	write_line_to_file('/tmp/testfile.txt', 'hello world')
 	define filehttp($ensure = "present", $mode = 0755, $source = "/dev/null") {
 		case $ensure {
 			present,installed: {
