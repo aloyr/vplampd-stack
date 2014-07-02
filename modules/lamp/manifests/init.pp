@@ -197,7 +197,6 @@ class lamp {
 					if defined('$languages') {
 						exec { 'setup_languages':
 							command => insertlanguages(),
-							creates => '/vagrant/data/insertlanguages.sql',
 							require => Exec [ 'setup_dbfile' ],
 						}
 						file { 'lang_file': 
