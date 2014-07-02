@@ -1,7 +1,8 @@
 <Virtualhost *:80>
-  ServerName 2hidglobal.com
-  DocumentRoot /var/www/hid/hid
-  <Directory /var/www/hid/hid>
+  ServerName <%= @webhost %>
+  <%= @serveralias %>
+  DocumentRoot <%= @webroot %>
+  <Directory <%= @webroot %>>
     AllowOverride All
   </Directory>
 </Virtualhost>

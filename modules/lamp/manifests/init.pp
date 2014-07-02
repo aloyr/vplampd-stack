@@ -11,6 +11,7 @@ class lamp {
 					 'memcached',
 					 'php53u',
 					 'php53u-cli',
+					 'php53u-devel',
 					 'php53u-gd',
 					 'php53u-mysql',
 					 'php53u-odbc',
@@ -28,6 +29,7 @@ class lamp {
 				   ]
 				$database = [ 'mysql51-mysql-server', 'mysql51-mysql' ]
 				$dbservice = 'mysql51-mysqld'
+				$dbcnf = '/opt/rh/mysql51/root/etc/my.cnf'
 			}
 			6: {
 				$web = [ 'httpd',
@@ -65,55 +67,16 @@ class lamp {
 						    -e 's/^\\(error_reporting\\) = .*/\\1 = E_ALL | E_STRICT/g' \\
 						    -e 's/^\\(html_errors\\) = Off/\\1 = On/g' \\
 						    -e 's/^\\(log_errors\\) = Off/\\1 = On/g' \\
-						    -e 's/^\\(memory_limit\\) = [0-9]+M/\\1 = 2048M/g' \\
+						    -e 's/^\\(memory_limit\\) = [0-9]\\+M/\\1 = 2048M/g' \\
 						    -e 's/^\\(post_max_size\\) = [0-9]\\+M/\\1 = 80M/g' \\
 						    -e 's/^\\(track_errors\\) = Off/\\1 = On/g' \\
 						    -e 's/^\\(upload_max_filesize\\) = [0-9]\\+M/\\1 = 20M/g' \\
 						    /etc/php.ini",
-			unless => 'grep "allow_url_fopen = On" /etc/php.ini',
+			unless => 'grep "^memory_limit = 2048M" /etc/php.ini',
 			require => Package [ $web ],
 		}
 
 
-
-		file { 'mysql_folder':
-			path => '/etc/mysql',
-			ensure => directory,
-		} ~>
-		file { 'mysql_optimizations':
-			path => '/etc/mysql/mysql_optimizations.cnf',
-			ensure => file,
-			content => template('lamp/mysql_optimizations.erb'),
-		}
-
-		exec { 'mysql_setup': 
-			command => "CNFLoc=`grep 'cnf' /etc/init.d/my*|awk '{print $3}'`; \\ 
-						echo \"[mysqld]\" >> $CNFLoc; \
-						echo \"key_buffer = 16M\" >> $CNFLoc; \
-						echo \"max_allowed_packet = 16M\" >> $CNFLoc; \
-						echo \"table_cache = 64\" >> $CNFLoc; \
-						echo \"sort_buffer_size = 512K\" >> $CNFLoc; \
-						echo \"net_buffer_length = 8K\" >> $CNFLoc; \
-						echo \"read_buffer_size = 256K\" >> $CNFLoc; \
-						echo \"read_rnd_buffer_size = 512K\" >> $CNFLoc; \
-						echo \"myisam_sort_buffer_size = 8M\" >> $CNFLoc; \
-						echo \"\" >> $CNFLoc; \
-						echo \"table_cache = 8192\" >> $CNFLoc; \
-						echo \"table_open_cache = 8192\" >> $CNFLoc; \
-						echo \"table_definition_cache = 8192\" >> $CNFLoc; \
-						echo \"query_cache_size = 512M\" >> $CNFLoc; \
-						echo \"thread_cache_size = 5\" >> $CNFLoc; \
-						echo \"innodb_thread_concurrency = 5\" >> $CNFLoc; \
-						echo \"innodb_buffer_pool_size = 1G\" >> $CNFLoc; \
-						echo \"key_buffer_size = 50M\" >> $CNFLoc; \
-						echo \"log-slow-queries = /var/logs/mysql_slow_queries.log\" >> $CNFLoc; \
-						echo \"innodb_flush_log_at_trx_commit = 2\" >> $CNFLoc; \
-						echo \"innodb_flush_method=O_DIRECT\" >> $CNFLoc; \
-						echo \"default-storage-engine=InnoDB\" >> $CNFLoc; \
-						echo \"default-table-type=InnoDB\" >> $CNFLoc;",
-			unless => "CNFLoc=`grep 'cnf' /etc/init.d/my*|awk '{print $3}'`;grep default-table-type $CNFLoc",
-			require => Package [ $database ],
-		}
 
 		exec { 'apc_ini':
 			command => "sed -i \\
@@ -121,7 +84,7 @@ class lamp {
 						    -e 's/^;\\(apc.shm_size\\)=.*/\\1=256M/g' \\
 						    /etc/php.d/apc.ini",
 			unless => 'grep "^apc.enabled=1" /etc/php.d/apc.ini',
-			require => Package [ $web ],
+			require => [ Package [ $web ], Exec [ 'php_ini' ] ],
 		}
 
 		commontools::yumgroup { '"Development Tools"':
@@ -160,6 +123,30 @@ class lamp {
 			require => Package[ $web ],
 		}
 
+		file { 'mysql_folder':
+			path => '/etc/mysql',
+			ensure => directory,
+			require => Package [ $database ],
+		}
+		file { 'mysql_optimizations':
+			path => '/etc/mysql/mysql_optimizations.cnf',
+			ensure => file,
+			content => template('lamp/mysql_optimizations.erb'),
+			require => File [ 'mysql_folder' ],
+		} 
+		exec { 'mysql_include':
+			command => "echo '!includedir /etc/mysql' >> $dbcnf",
+			unless => "grep 'includedir'  $dbcnf",
+			require => File [ 'mysql_optimizations' ]
+		}
+
+		file { 'http_site':
+			ensure => file,
+			path => sprintf("/etc/httpd/conf.d/%s.conf", $webhost),
+			content => template('lamp/apache_site.erb'),
+			require => Package [ $web ],
+		}
+
 		$webservicesreq = defined('$webrootparsed') ? {
 			true => [ 'selinux-off-2', 'reset_webroot' ],
 			false => 'selinux-off-2',
@@ -185,7 +172,7 @@ class lamp {
 		service { $dbservice:
 			ensure => running,
 			enable => true,
-			require => [ Exec [ 'selinux-off-2' ], Package [ $database ] ],
+			require => [ Exec [ 'selinux-off-2', 'mysql_include' ], Package [ $database ] ],
 		}
 
 		if defined('$dbname') {
@@ -212,6 +199,12 @@ class lamp {
 							command => insertlanguages(),
 							creates => '/vagrant/data/insertlanguages.sql',
 							require => Exec [ 'setup_dbfile' ],
+						}
+						file { 'lang_file': 
+							path => '/vagrant/data/insertlanguages.sql',
+							content => insertlanguages(),
+							ensure => file,
+							require => Exec [ 'setup_languages' ],
 						}
 					}
 				}

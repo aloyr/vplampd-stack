@@ -111,6 +111,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
       "zonefile" => settings['timezone'],
       "webroot" => settings['webroot'],
       "webrootparsed" => settings['webroot'].gsub('/','\/'),
+      "webhost" => settings['hostname'],
     }
     settings['database'].each do |item|
       puppet.facter.merge!({"db#{item[0]}" => item[1]})
@@ -121,6 +122,9 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     end 
     if settings['languages'] != nil
       puppet.facter['languages'] = settings['languages'].to_yaml
+    end
+    if settings['aliases'] != nil
+      puppet.facter['serveralias'] = 'ServerAlias ' + settings['aliases'].join(' ')
     end
   end
 end

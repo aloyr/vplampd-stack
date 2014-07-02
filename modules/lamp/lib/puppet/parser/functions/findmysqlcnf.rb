@@ -5,12 +5,13 @@ module Puppet::Parser::Functions
 			if path =~ /.*mysql.*/
 				File.open(path,'r').each_line do |line|
 					if line =~ /.*cnf.*/
-						line.split(' ')[2]
+						$line = line
 						break
 					end
 				end
 				break
 			end
 		end
+		$line.split(' ')[2]
 	end
 end 
