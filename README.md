@@ -1,7 +1,7 @@
 vplampd-stack
 =============
 
-Vagrant, puppet, lamp, drupal stack, based on CentOS 5.6
+Vagrant, puppet, lamp, drupal, drush, xhprof, xdebug, memcache stack, based on CentOS 5.6
 
 You will need 3 vagrant plugins, installed by running the following command:
 
