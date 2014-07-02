@@ -46,6 +46,10 @@ class drush {
 		require => Exec [ 'drush' ],
 	}
 
+	exec { 'drush_enable_modules':
+		command => "drush -r $webroot en stage_file_proxy devel xhprof memcache memcache_admin",
+	}
+
 	filehttp { 'set_prompt.sh':
 		ensure => present,
 		name => '/etc/profile.d/set_prompt.sh',
