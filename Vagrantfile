@@ -127,4 +127,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
       puppet.facter['serveralias'] = 'ServerAlias ' + settings['aliases'].join(' ')
     end
   end
+  config.trigger.before :provision do
+    File.delete('data/insertlanguages.sql') if File.exist?('data/insertlanguages.sql')
+  end
 end
