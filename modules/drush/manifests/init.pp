@@ -48,6 +48,7 @@ class drush {
 
 	exec { 'drush_enable_modules':
 		command => "/usr/local/bin/drush -r $webroot en stage_file_proxy devel xhprof memcache memcache_admin",
+		require => [ Exec [ '/usr/local/bin/drush'], Service [ $dbservice ] ],
 	}
 
 	filehttp { 'set_prompt.sh':
