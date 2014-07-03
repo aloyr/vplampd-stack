@@ -46,9 +46,11 @@ class drush {
 		require => Exec [ 'drush' ],
 	}
 
-	exec { 'drush_enable_modules':
-		command => "/usr/local/bin/drush -r $webroot en stage_file_proxy devel xhprof memcache memcache_admin",
-		require => [ File [ '/usr/local/bin/drush'], Service [ $lamp::dbservice ] ],
+	if defined('$dbfile') {
+		exec { 'drush_enable_modules':
+			command => "/usr/local/bin/drush -r $webroot en stage_file_proxy devel xhprof memcache memcache_admin",
+			require => [ File [ '/usr/local/bin/drush'], Service [ $lamp::dbservice ], Exec [ 'setup_dbfile' ], ],
+		}
 	}
 
 	filehttp { 'set_prompt.sh':
