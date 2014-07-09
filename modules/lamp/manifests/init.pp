@@ -95,6 +95,7 @@ class lamp {
 		exec { 'xhprof_setup':
 			command => 'pecl install xhprof-beta ; echo "extension=xhprof.so" > /etc/php.d/xhprof.ini',
 			creates => '/etc/php.d/xhprof.ini',
+			require => Package [ $web ],
 		}
 
 		exec { 'xdebug_setup': 
@@ -103,6 +104,11 @@ class lamp {
 						echo "xdebug.remote_port=9000" >> /etc/php.d/xdebug.ini ; \
 						echo "xdebug.remote_autostart=1" >> /etc/php.d/xdebug.ini',
 			unless => 'grep "remote_enable" /etc/php.d/xdebug.ini',
+			require => Package [ $web ],
+		}
+		exec { 'uploadprogress_setup':
+			command => 'pecl install uploadprogress ; echo "extension=uploadprogress.so" > /etc/php.d/uploadprogress.ini',
+			creates => '/etc/php.d/uploadprogress.ini',
 			require => Package [ $web ],
 		}
 
