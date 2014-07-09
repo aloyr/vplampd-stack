@@ -13,6 +13,7 @@ class lamp {
 					 'php53u-cli',
 					 'php53u-devel',
 					 'php53u-gd',
+					 'php53u-mbstring',
 					 'php53u-mysql',
 					 'php53u-odbc',
 					 'php53u-pdo',
@@ -185,6 +186,12 @@ class lamp {
 				exec { 'setup_dbuser': 
 					command => "echo \"grant all on $dbname.* to $dbuser@localhost identified by '$dbpass'\"| mysql",
 					unless => "echo \"select user from mysql.user where host = 'localhost' and user = 'hid'\"| \
+					           mysql -BN -uroot| grep hid &> /dev/null ",
+					require => Exec [ 'setup_db' ],
+				}	
+				exec { 'setup_dbuser_external': 
+					command => "echo \"grant all on $dbname.* to $dbuser@\`%\` identified by '$dbpass'\"| mysql",
+					unless => "echo \"select user from mysql.user where host = '%' and user = 'hid'\"| \
 					           mysql -BN -uroot| grep hid &> /dev/null ",
 					require => Exec [ 'setup_db' ],
 				}	
