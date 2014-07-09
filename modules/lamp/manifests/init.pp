@@ -237,6 +237,13 @@ class lamp {
 			name => '/etc/init.d/memcached-init',	
 			mode => 0755,
 		}
+
+		drush::filehttp { 'tuning-primer.sh':
+			ensure => present,
+			source => 'https://launchpadlibrarian.net/78745738/tuning-primer.sh',
+			name => '/usr/local/bin/tuning-primer.sh',	
+			mode => 0755,
+		}
 		
 	}
 
