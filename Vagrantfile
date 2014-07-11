@@ -160,7 +160,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     writefile.close()
   end
   config.trigger.before :destroy do
-    puts 'Adjusting settings.php file'
+    puts 'Restoring settings.php file'
     settingsfile = settings['local'].gsub('~', ENV['HOME']) + '/sites/default/settings.php'
     settingslines = File.open(settingsfile,'r').readlines()
     writefile = File.open(settingsfile,'w+')
@@ -169,6 +169,4 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     end
     writefile.close()
   end
-  puts config.vm.box
-  exit
 end
