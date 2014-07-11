@@ -48,7 +48,7 @@ class drush {
 
 	if defined('$dbfile') {
 		exec { 'drush_enable_modules':
-			command => "/usr/local/bin/drush -r $webroot en stage_file_proxy devel xhprof memcache memcache_admin",
+			command => "/usr/local/bin/drush -r $webroot en stage_file_proxy devel xhprof memcache memcache_admin update",
 			require => [ File [ '/usr/local/bin/drush'], Service [ $lamp::dbservice ], Exec [ 'setup_dbfile' ], ],
 		}
 	}
@@ -56,7 +56,7 @@ class drush {
 	filehttp { 'set_prompt.sh':
 		ensure => present,
 		name => '/etc/profile.d/set_prompt.sh',
-		source => 'https://raw.githubusercontent.com/aloyr/system_config_files/master/set_prompt.sh',
+		source => 'https://raw.githubusercontent.com/aloyr/system_config_files/master/dotfiles/set_prompt.sh',
 		mode => 0755,
 	}
 }
