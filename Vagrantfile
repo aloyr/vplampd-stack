@@ -76,6 +76,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   config.vm.synced_folder ".", "/vagrant",  :mount_options => ["dmode=777,fmode=766"]
   settings['shares'].each do |item|
     config.vm.synced_folder item['local'], item['vm'], mount_options: ["dmode=777,fmode=766,uid=48,gid=48"]
+    settings['local'] = item['local'] if item['vm'] == settings['webroot']
   end
 
   # Provider-specific configuration so you can fine-tune various
@@ -133,4 +134,41 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   config.trigger.before :provision do
     File.delete('data/insertlanguages.sql') if File.exist?('data/insertlanguages.sql')
   end
+  vagstring = ' ## vagrant-provisioner'
+  config.trigger.after :provision do
+    puts 'Adjusting settings.php file'
+    settingsfile = settings['local'].gsub('~', ENV['HOME']) + '/sites/default/settings.php'
+    settingslines = File.open(settingsfile,'r').readlines()
+    writefile = File.open(settingsfile,'w+')
+    settingslines.each do |line|
+      writefile.write(line) if line !~ /#{vagstring}/
+    end
+    if settings['settingsphp'] != nil
+      settings['settingsphp'].each do |settingline|
+        writefile.write(settingline.gsub('USER', ENV['USER'].upcase) + vagstring + "\n")
+      end
+    end
+    defaultDB = "$databases['default']['default'] = array("
+    defaultDB += "'driver' => 'mysql',"
+    defaultDB += "'database' => '" + settings['database']['name'] + "',"
+    defaultDB += "'username' => '" + settings['database']['user'] + "',"
+    defaultDB += "'password' => '" + settings['database']['pass'] + "',"
+    defaultDB += "'host' => '127.0.0.1',"
+    defaultDB += "'prefix' => '',"
+    defaultDB += ");" + vagstring
+    writefile.write(defaultDB)
+    writefile.close()
+  end
+  config.trigger.before :destroy do
+    puts 'Adjusting settings.php file'
+    settingsfile = settings['local'].gsub('~', ENV['HOME']) + '/sites/default/settings.php'
+    settingslines = File.open(settingsfile,'r').readlines()
+    writefile = File.open(settingsfile,'w+')
+    settingslines.each do |line|
+      writefile.write(line) if line !~ /#{vagstring}/
+    end
+    writefile.close()
+  end
+  puts config.vm.box
+  exit
 end
