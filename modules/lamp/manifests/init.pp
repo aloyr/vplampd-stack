@@ -77,7 +77,12 @@ class lamp {
 			require => Package [ $web ],
 		}
 
-
+		exec { 'apc_ini_realpath':
+			command => "echo 'apc.realpath_cache_size=256k' >> /etc/php.d/apc.ini; \\
+			            echo 'apc.realpath_cache_ttl=86400' >> /etc/php.d/apc.ini;",
+			unless => 'grep "realpath_cache" /etc/php.d/apc.ini',
+			require => Exec [ 'apc_ini' ],
+		}
 
 		exec { 'apc_ini':
 			command => "sed -i \\
@@ -196,7 +201,7 @@ class lamp {
 					require => Exec [ 'setup_db' ],
 				}	
 				exec { 'setup_dbuser_external': 
-					command => "echo \"grant all on $dbname.* to $dbuser@\`%\` identified by '$dbpass'\"| mysql",
+					command => "echo \"grant all on $dbname.* to $dbuser@\\`%\\` identified by '$dbpass'\"| mysql",
 					unless => "echo \"select user from mysql.user where host = '%' and user = 'hid'\"| \
 					           mysql -BN -uroot| grep hid &> /dev/null ",
 					require => Exec [ 'setup_db' ],
