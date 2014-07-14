@@ -15,46 +15,49 @@ defaults = {'timezone'=> 'America/Chicago',
             'aliases' => 'www.' + Socket.gethostname + '.dev',
            }
 
-if settings['database'] == nil
-  raise Vagrant::Errors::VagrantError.new, 'Error: database not defined in config.yml file, setup cannot continue'
-else
-  if settings['database']['name'] == nil
-    raise Vagrant::Errors::VagrantError.new, 'Error: database name not defined in config.yml file, setup cannot continue'
-  end
-  if settings['database']['user'] == nil
-    raise Vagrant::Errors::VagrantError.new, 'Error: database user not defined in config.yml file, setup cannot continue'
-  end
-  if settings['database']['pass'] == nil
-    raise Vagrant::Errors::VagrantError.new, 'Error: database pass not defined in config.yml file, setup cannot continue'
-  end
-  if settings['database']['file'] == nil
-    raise Vagrant::Errors::VagrantError.new, 'Error: database dump file not defined in config.yml file, setup cannot continue'
+def checkPlugin(pluginName)
+  unless Vagrant.has_plugin?(pluginName)
+    raise Vagrant::Errors::VagrantError.new, pluginName + ' plugin missing. Install it with "sudo vagrant plugin install ' + pluginName + '"'
   end
 end
-if settings['settingsphp'] == nil
-  puts 'Warning: settingsphp not defined in config.yml file. The setup should work, but are you sure this is what you want?'
+
+['vagrant-cachier', 'vagrant-hostsupdater', 'vagrant-triggers'].each do |plugin|
+  checkPlugin(plugin)
 end
-if settings['timezone'] == nil
-  puts 'Warning: timezone not defined in config.yml file, assuming ' + defaults['timezone']
-  setings['timezone'] = defaults['timezone']
+
+def checkErrors setting 
+  if setting['value'] == nil
+    raise Vagrant::Errors::VagrantError.new, "Configuration Error: #{setting['name']} not defined in config.yml file, setup cannot continue"
+  end
 end
-if settings['hostname'] == nil
-  puts 'Warning: hostname not defined in config.yml file, assuming ' + defaults['hostname']
-  setings['hostname'] = defaults['hostname']
+[
+  {'name' => 'database', 'value' => settings['database']},
+  {'name' => 'database name', 'value' => settings['database']['name']},
+  {'name' => 'database user', 'value' => settings['database']['user']},
+  {'name' => 'database pass', 'value' => settings['database']['pass']},
+  {'name' => 'database file', 'value' => settings['database']['file']},
+].each do |item|
+  checkErrors item
 end
-if settings['webroot'] == nil
-  puts 'Warning: webroot not defined in config.yml file, assuming ' + defaults['webroot']
-  settings['webroot'] = defaults['webroot']
+
+def checkWarnings settings, setting, default = nil
+  if settings[setting] == nil and default == nil
+    puts 'Warning: ' + setting + ' not defined in config.yml file. The setup should work, but are you sure this is what you want?'
+  elsif settings[setting] == nil and default != nil
+    puts 'Warning: ' + setting + ' not defined in config.yml file, assuming ' + default
+    settings[setting] = default
+  end
 end
-if settings['aliases'] == nil
-  puts 'Warning: aliases not defined in config.yml file, assuming ' + defaults['aliases']
-  settings['aliases'] = [defaults['aliases']]
-end
-if settings['languages'] == nil
-  puts 'Warning: no languages defined in config.yml file, the setup should still work.'
-end
-if settings['shares'] == nil
-  puts 'Warning: no shares defined in config.yml file, the setup should work, but this is unusual.'
+[
+  {'setting' => 'languages', 'default' => nil},
+  {'setting' => 'settingsphp', 'default' => nil},
+  {'setting' => 'shares', 'default' => nil},
+  {'setting' => 'aliases', 'default' => defaults['aliases']},
+  {'setting' => 'hostname', 'default' => defaults['hostname']},
+  {'setting' => 'timezone', 'default' => defaults['timezone']},
+  {'setting' => 'webroot', 'default' => defaults['webroot']},
+].each do |item|
+  checkWarnings settings, item['setting'], item['default']
 end
 
 # Vagrantfile API/syntax version. Don't touch unless you know what you're doing!
@@ -188,6 +191,10 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   config.trigger.after :provision do
     puts 'Adjusting settings.php file'
     settingsfile = settings['local'].gsub('~', ENV['HOME']) + '/sites/default/settings.php'
+    if not File.file?settingsfile
+      defsettingsfile = settings['local'].gsub('~', ENV['HOME']) + '/sites/default/default.settings.php'
+      cp(defsettingsfile, settingsfile)
+    end
     settingslines = File.open(settingsfile,'r').readlines()
     writefile = File.open(settingsfile,'w+')
     settingslines.each do |line|
