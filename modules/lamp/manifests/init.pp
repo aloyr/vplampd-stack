@@ -72,6 +72,7 @@ class lamp {
 						    -e 's/^\\(post_max_size\\) = [0-9]\\+M/\\1 = 80M/g' \\
 						    -e 's/^\\(track_errors\\) = Off/\\1 = On/g' \\
 						    -e 's/^\\(upload_max_filesize\\) = [0-9]\\+M/\\1 = 20M/g' \\
+						    -e 's/^\\(max_execution_time\\) = [0-9]\\+/\\1 = 300/g' \\
 						    /etc/php.ini",
 			unless => 'grep "^memory_limit = 2048M" /etc/php.ini',
 			require => Package [ $web ],
