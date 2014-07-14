@@ -2,10 +2,60 @@
 # vi: set ft=ruby :
 require 'yaml'
 require 'pathname'
+require 'socket'
 
 abort "ERROR: config.yml file missing." if not Pathname('config.yml').exist?
 settings = YAML.load_file('config.yml')
 dnsServer = `scutil --dns|awk '$0 ~ /nameserver/ {printf $3; exit}'`
+
+# sanity checks to the yaml configuration file
+defaults = {'timezone'=> 'America/Chicago', 
+            'hostname'=> Socket.gethostname + '.dev', 
+            'webroot'=> '/var/www/hid',
+            'aliases' => 'www.' + Socket.gethostname + '.dev',
+           }
+
+if settings['database'] == nil
+  raise Vagrant::Errors::VagrantError.new, 'Error: database not defined in config.yml file, setup cannot continue'
+else
+  if settings['database']['name'] == nil
+    raise Vagrant::Errors::VagrantError.new, 'Error: database name not defined in config.yml file, setup cannot continue'
+  end
+  if settings['database']['user'] == nil
+    raise Vagrant::Errors::VagrantError.new, 'Error: database user not defined in config.yml file, setup cannot continue'
+  end
+  if settings['database']['pass'] == nil
+    raise Vagrant::Errors::VagrantError.new, 'Error: database pass not defined in config.yml file, setup cannot continue'
+  end
+  if settings['database']['file'] == nil
+    raise Vagrant::Errors::VagrantError.new, 'Error: database dump file not defined in config.yml file, setup cannot continue'
+  end
+end
+if settings['settingsphp'] == nil
+  puts 'Warning: settingsphp not defined in config.yml file. The setup should work, but are you sure this is what you want?'
+end
+if settings['timezone'] == nil
+  puts 'Warning: timezone not defined in config.yml file, assuming ' + defaults['timezone']
+  setings['timezone'] = defaults['timezone']
+end
+if settings['hostname'] == nil
+  puts 'Warning: hostname not defined in config.yml file, assuming ' + defaults['hostname']
+  setings['hostname'] = defaults['hostname']
+end
+if settings['webroot'] == nil
+  puts 'Warning: webroot not defined in config.yml file, assuming ' + defaults['webroot']
+  settings['webroot'] = defaults['webroot']
+end
+if settings['aliases'] == nil
+  puts 'Warning: aliases not defined in config.yml file, assuming ' + defaults['aliases']
+  settings['aliases'] = [defaults['aliases']]
+end
+if settings['languages'] == nil
+  puts 'Warning: no languages defined in config.yml file, the setup should still work.'
+end
+if settings['shares'] == nil
+  puts 'Warning: no shares defined in config.yml file, the setup should work, but this is unusual.'
+end
 
 # Vagrantfile API/syntax version. Don't touch unless you know what you're doing!
 VAGRANTFILE_API_VERSION = "2"
@@ -47,7 +97,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   # using a specific IP.
   # config.vm.network "private_network", ip: "192.168.33.10"
   config.vm.hostname = settings['hostname']
-  if defined? settings['languages']
+  if settings['languages'] != nil
     settings['languages'].each do |item|
       # settings['aliases'].merge!(item[1])
       item.each do |lang|
