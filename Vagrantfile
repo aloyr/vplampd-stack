@@ -214,6 +214,14 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     defaultDB += "'prefix' => '',"
     defaultDB += ");" + vagstring
     writefile.write(defaultDB)
+    if settings['languages'] != nil
+      settings['languages'].each do |lang|
+        lang.each do |item|
+          line = "$conf['language_domains']['#{item[0]}'] = 'http://#{item[1]}'; #{vagstring} \n"
+          writefile.write(line)
+        end
+      end
+    end 
     writefile.close()
   end
   config.trigger.before :destroy do
