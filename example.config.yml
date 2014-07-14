@@ -24,3 +24,16 @@ ports:
   - {local: 4567, vm: 80}
 
 database: {name: "example", user: "example", pass: "example", file: "example.sql"}
+
+settingsphp:
+  - "$conf['cache_backends'][] = 'sites/all/modules/memcache/memcache.inc';"
+  - "$conf['cache_default_class'] = 'MemCacheDrupal';"
+  - "$conf['memcache_key_prefix'] = 'example.dev';"
+  - "$conf['cache_inc'] = 'sites/all/modules/contrib/memcache/memcache.db.inc';"
+  - "$conf['memcache_servers'] = array('localhost:11211' => 'default',);"
+  - "$conf['memcache_bins'] = array('cache' => 'default',);"
+  - "$conf['environment_indicator_text'] = 'DEV | USER';"
+  - "$conf['environment_indicator_color'] = 'dark-red';"
+  - "$conf['environment_indicator_enabled'] = TRUE;"
+  - "$conf['stage_file_proxy_origin'] = 'http://www.example.dev';"
+  - "$conf['stage_file_proxy_origin_dir'] = 'sites/example.dev/files';"
