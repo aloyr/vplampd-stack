@@ -209,7 +209,7 @@ class lamp {
 				}	
 				if defined('$dbfile') {
 					exec { 'setup_dbfile':
-						command => "mysql $dbname < /vagrant/data/$dbfile",
+						command => "mysql $dbname < /vagrant/data/$dbfile ; echo 'foi' >> /tmp/bla.txt",
 						unless => "echo 'select name from users' | mysql hid &> /dev/null",
 						require => Exec [ 'setup_dbuser' ],
 					}
@@ -226,6 +226,12 @@ class lamp {
 						}
 					}
 				}
+			}
+		}
+
+		if defined('$redodb') {
+			exec { 'reprovision_dbfile':
+				command => "mysql $dbname < /vagrant/data/$dbfile"
 			}
 		}
 

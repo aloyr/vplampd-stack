@@ -1,20 +1,23 @@
 # -*- mode: ruby -*-
 # vi: set ft=ruby :
-require 'yaml'
 require 'pathname'
 require 'socket'
+require 'timeout'
+require 'yaml'
 
-abort "ERROR: config.yml file missing." if not Pathname('config.yml').exist?
+# is the config file present? if not, halt execution as there is nothing to do!
+raise Vagrant::Errors::VagrantError.new, "ERROR: config.yml file missing." if not Pathname('config.yml').exist?
+
+# setup settings variable, dnsserver and some defaults
 settings = YAML.load_file('config.yml')
 dnsServer = `scutil --dns|awk '$0 ~ /nameserver/ {printf $3; exit}'`
-
-# sanity checks to the yaml configuration file
 defaults = {'timezone'=> 'America/Chicago', 
             'hostname'=> Socket.gethostname + '.dev', 
             'webroot'=> '/var/www/hid',
             'aliases' => 'www.' + Socket.gethostname + '.dev',
            }
 
+# sanity checks to the yaml configuration file
 def checkPlugin(pluginName)
   unless Vagrant.has_plugin?(pluginName)
     raise Vagrant::Errors::VagrantError.new, pluginName + ' plugin missing. Install it with "sudo vagrant plugin install ' + pluginName + '"'
@@ -58,6 +61,14 @@ end
   {'setting' => 'webroot', 'default' => defaults['webroot']},
 ].each do |item|
   checkWarnings settings, item['setting'], item['default']
+end
+
+# output helper message if developer is re-provisioning the box
+if ARGV[0] == 'provision' and ENV['REDODB'] == nil
+  puts "\nYou can reprovision the database by issuing the command below:"
+  puts "REDODB='yes' vagrant provision\n\n"
+elsif ARGV[0] == 'provision' and ENV['REDODB'] == 'yes'
+  puts "\nVagrant will make puppet reprovision the database.\n\n"
 end
 
 # Vagrantfile API/syntax version. Don't touch unless you know what you're doing!
@@ -183,10 +194,15 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     if settings['aliases'] != nil
       puppet.facter['serveralias'] = 'ServerAlias ' + settings['aliases'].join(' ')
     end
+    if ENV['REDODB'] == 'yes'
+      puppet.facter['redodb'] = 'y'
+    end
   end
   config.trigger.before :provision do
     File.delete('data/insertlanguages.sql') if File.exist?('data/insertlanguages.sql')
   end
+
+  # provisioning triggers stuff below
   vagstring = ' ## vagrant-provisioner'
   config.trigger.after :provision do
     puts 'Adjusting settings.php file'
@@ -226,6 +242,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     end 
     writefile.close()
   end
+
   config.trigger.before :destroy do
     puts 'Restoring settings.php file'
     settingsfile = settings['local'].gsub('~', ENV['HOME']) + '/sites/default/settings.php'
