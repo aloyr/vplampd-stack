@@ -194,6 +194,8 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     if not File.file?settingsfile
       defsettingsfile = settings['local'].gsub('~', ENV['HOME']) + '/sites/default/default.settings.php'
       cp(defsettingsfile, settingsfile)
+    else
+      File.chmod(0666, settingsfile)
     end
     settingslines = File.open(settingsfile,'r').readlines()
     writefile = File.open(settingsfile,'w+')
