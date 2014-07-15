@@ -241,6 +241,13 @@ class lamp {
 				onlyif => "grep '/var/www/html'  /etc/httpd/conf/httpd.conf",
 				require => Package [ 'httpd' ],
 			}
+
+			drush::filehttp { 'htaccess':
+				ensure => present,
+				source => 'http://cgit.drupalcode.org/drupal/plain/.htaccess?h=7.x',
+				name => "$webroot/.htaccess",
+				require => Exec [ 'reset_webroot' ],
+			}
 		}
 
 		drush::filehttp { 'memcached-init':
@@ -256,7 +263,6 @@ class lamp {
 			name => '/usr/local/bin/tuning-primer.sh',	
 			mode => 0755,
 		}
-		
 	}
 
 }
