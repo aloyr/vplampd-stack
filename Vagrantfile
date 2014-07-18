@@ -204,7 +204,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
   # provisioning triggers stuff below
   vagstring = ' ## vagrant-provisioner'
-  config.trigger.after :provision do
+  config.trigger.before :provision do
     puts 'Adjusting settings.php file'
     settingsfile = settings['local'].gsub('~', ENV['HOME']) + '/sites/default/settings.php'
     if not File.file?settingsfile
