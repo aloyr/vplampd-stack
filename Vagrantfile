@@ -210,9 +210,8 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     if not File.file?settingsfile
       defsettingsfile = settings['local'].gsub('~', ENV['HOME']) + '/sites/default/default.settings.php'
       cp(defsettingsfile, settingsfile)
-    else
-      File.chmod(0666, settingsfile)
     end
+    File.chmod(0666, settingsfile)
     settingslines = File.open(settingsfile,'r').readlines()
     writefile = File.open(settingsfile,'w+')
     settingslines.each do |line|
@@ -244,13 +243,16 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   end
 
   config.trigger.before :destroy do
-    puts 'Restoring settings.php file'
     settingsfile = settings['local'].gsub('~', ENV['HOME']) + '/sites/default/settings.php'
-    settingslines = File.open(settingsfile,'r').readlines()
-    writefile = File.open(settingsfile,'w+')
-    settingslines.each do |line|
-      writefile.write(line) if line !~ /#{vagstring}/
+    if File.file?settingsfile
+      puts 'Restoring settings.php file'
+      File.chmod(0666, settingsfile)
+      settingslines = File.open(settingsfile,'r').readlines()
+      writefile = File.open(settingsfile,'w+')
+      settingslines.each do |line|
+        writefile.write(line) if line !~ /#{vagstring}/
+      end
+      writefile.close()
     end
-    writefile.close()
   end
 end
