@@ -71,6 +71,61 @@ elsif ARGV[0] == 'provision' and ENV['REDODB'] == 'yes'
   puts "\nVagrant will make puppet reprovision the database.\n\n"
 end
 
+# helper functions to manipulate the settings.php file
+def resetSettingsFile settings, vagstring
+  settingsfile = settings['local'].gsub('~', ENV['HOME']) + '/sites/default/settings.php'
+  removeString = vagstring.gsub("\n",'')
+  if File.file?settingsfile
+    puts 'Restoring settings.php file'
+    File.chmod(0666, settingsfile)
+    settingslines = File.open(settingsfile,'r').readlines()
+    writefile = File.open(settingsfile,'w+')
+    settingslines.each do |line|
+      writefile.write(line) if line !~ /#{removeString}/
+    end
+    writefile.close()
+  end
+end
+
+def adjustSettingsFile settings, vagstring
+  resetSettingsFile settings, vagstring
+  puts 'Adjusting settings.php file'
+  settingsfile = settings['local'].gsub('~', ENV['HOME']) + '/sites/default/settings.php'
+  if not File.file?settingsfile
+    defsettingsfile = settings['local'].gsub('~', ENV['HOME']) + '/sites/default/default.settings.php'
+    cp(defsettingsfile, settingsfile)
+  end
+  File.chmod(0666, settingsfile)
+  settingslines = File.open(settingsfile,'r').readlines()
+  writefile = File.open(settingsfile,'w+')
+  settingslines.each do |line|
+    writefile.write(line) if line !~ /#{vagstring}/
+  end
+  if settings['settingsphp'] != nil
+    settings['settingsphp'].each do |settingline|
+      writefile.write(settingline.gsub('USER', ENV['USER'].upcase) + vagstring)
+    end
+  end
+  defaultDB = "$databases['default']['default'] = array("
+  defaultDB += "'driver' => 'mysql',"
+  defaultDB += "'database' => '" + settings['database']['name'] + "',"
+  defaultDB += "'username' => '" + settings['database']['user'] + "',"
+  defaultDB += "'password' => '" + settings['database']['pass'] + "',"
+  defaultDB += "'host' => '127.0.0.1',"
+  defaultDB += "'prefix' => '',"
+  defaultDB += ");" + vagstring
+  writefile.write(defaultDB)
+  if settings['languages'] != nil
+    settings['languages'].each do |lang|
+      lang.each do |item|
+        line = "$conf['language_domains']['#{item[0]}'] = 'http://#{item[1]}'; #{vagstring}"
+        writefile.write(line)
+      end
+    end
+  end 
+  writefile.close()
+end
+
 # Vagrantfile API/syntax version. Don't touch unless you know what you're doing!
 VAGRANTFILE_API_VERSION = "2"
 
@@ -203,56 +258,12 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   end
 
   # provisioning triggers stuff below
-  vagstring = ' ## vagrant-provisioner'
+  vagstring = ' ## vagrant-provisioner' + "\n"
   config.trigger.before :provision do
-    puts 'Adjusting settings.php file'
-    settingsfile = settings['local'].gsub('~', ENV['HOME']) + '/sites/default/settings.php'
-    if not File.file?settingsfile
-      defsettingsfile = settings['local'].gsub('~', ENV['HOME']) + '/sites/default/default.settings.php'
-      cp(defsettingsfile, settingsfile)
-    end
-    File.chmod(0666, settingsfile)
-    settingslines = File.open(settingsfile,'r').readlines()
-    writefile = File.open(settingsfile,'w+')
-    settingslines.each do |line|
-      writefile.write(line) if line !~ /#{vagstring}/
-    end
-    if settings['settingsphp'] != nil
-      settings['settingsphp'].each do |settingline|
-        writefile.write(settingline.gsub('USER', ENV['USER'].upcase) + vagstring + "\n")
-      end
-    end
-    defaultDB = "$databases['default']['default'] = array("
-    defaultDB += "'driver' => 'mysql',"
-    defaultDB += "'database' => '" + settings['database']['name'] + "',"
-    defaultDB += "'username' => '" + settings['database']['user'] + "',"
-    defaultDB += "'password' => '" + settings['database']['pass'] + "',"
-    defaultDB += "'host' => '127.0.0.1',"
-    defaultDB += "'prefix' => '',"
-    defaultDB += ");" + vagstring
-    writefile.write(defaultDB)
-    if settings['languages'] != nil
-      settings['languages'].each do |lang|
-        lang.each do |item|
-          line = "$conf['language_domains']['#{item[0]}'] = 'http://#{item[1]}'; #{vagstring} \n"
-          writefile.write(line)
-        end
-      end
-    end 
-    writefile.close()
+    adjustSettingsFile settings, vagstring
   end
 
   config.trigger.before :destroy do
-    settingsfile = settings['local'].gsub('~', ENV['HOME']) + '/sites/default/settings.php'
-    if File.file?settingsfile
-      puts 'Restoring settings.php file'
-      File.chmod(0666, settingsfile)
-      settingslines = File.open(settingsfile,'r').readlines()
-      writefile = File.open(settingsfile,'w+')
-      settingslines.each do |line|
-        writefile.write(line) if line !~ /#{vagstring}/
-      end
-      writefile.close()
-    end
+    resetSettingsFile settings, vagstring
   end
 end

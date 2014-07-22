@@ -64,7 +64,7 @@ class lamp {
 		exec { 'php_ini':
 			command => "sed -i \\
 						    -e 's/^\\(allow_url_fopen\\) = Off/\\1 = On/g' \\
-						    -e 's/^; \\(date.timezone\\) =.*/\\1 = America\\/Chicago/g' \\
+						    -e 's/^; *\\(date.timezone\\) =.*/\\1 = America\\/Chicago/g' \\
 						    -e 's/^\\(display.*_errors\\) = Off/\\1 = On/g' \\
 						    -e 's/^\\(error_reporting\\) = .*/\\1 = E_ALL | E_STRICT/g' \\
 						    -e 's/^\\(html_errors\\) = Off/\\1 = On/g' \\
