@@ -21,6 +21,7 @@ class lamp {
 					 'php53u-pecl-apc',
 					 'php53u-pecl-imagick',
 					 'php53u-pecl-memcache',
+					 'php53u-pecl-memcached',
 					 'php53u-pecl-redis',
 					 'php53u-pecl-xdebug',
 					 'php53u-process',
