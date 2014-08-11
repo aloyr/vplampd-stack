@@ -33,6 +33,6 @@ include commonTools
 include lamp
 include drush
 if $operatingsystem == 'CentOS' and $operatingsystemmajrelease == '6' {
-	include nodejs
-	include perfmon
+	#include nodejs
+	#include perfmon
 }

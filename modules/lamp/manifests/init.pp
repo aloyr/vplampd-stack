@@ -54,6 +54,7 @@ class lamp {
 				   ]
 				$database = [ 'MariaDB-server', 'MariaDB-client' ]
 				$dbservice = 'mysql'
+        $dbcnf = '/etc/my.cnf'
 			}
 		}
 		package { $web:
@@ -79,22 +80,41 @@ class lamp {
 			require => Package [ $web ],
 		}
 
-		exec { 'apc_ini_realpath':
-			command => "echo 'apc.realpath_cache_size=256k' >> /etc/php.d/apc.ini; \\
-			            echo 'apc.realpath_cache_ttl=86400' >> /etc/php.d/apc.ini;",
-			unless => 'grep "realpath_cache" /etc/php.d/apc.ini',
-			require => Exec [ 'apc_ini' ],
-		}
-
-		exec { 'apc_ini':
-			command => "sed -i \\
-						    -e 's/^;\\(apc.enabled\\)=.*/\\1=1/g' \\
-						    -e 's/^;\\(apc.shm_size\\)=.*/\\1=256M/g' \\
-						    /etc/php.d/apc.ini",
-			unless => 'grep "^apc.enabled=1" /etc/php.d/apc.ini',
-			require => [ Package [ $web ], Exec [ 'php_ini' ] ],
-		}
-
+    if $operatingsystemmajrelease == 5 {
+  		exec { 'apc_ini_realpath':
+  			command => "echo 'apc.realpath_cache_size=256k' >> /etc/php.d/apc.ini; \\
+  			            echo 'apc.realpath_cache_ttl=86400' >> /etc/php.d/apc.ini;",
+  			unless => 'grep "realpath_cache" /etc/php.d/apc.ini',
+  			require => Exec [ 'apc_ini' ],
+  		}
+  
+  		exec { 'apc_ini':
+  			command => "sed -i \\
+  						    -e 's/^;\\(apc.enabled\\)=.*/\\1=1/g' \\
+  						    -e 's/^;\\(apc.shm_size\\)=.*/\\1=256M/g' \\
+  						    /etc/php.d/apc.ini",
+  			unless => 'grep "^apc.enabled=1" /etc/php.d/apc.ini',
+  			require => [ Package [ $web ], Exec [ 'php_ini' ] ],
+  		}
+    }
+    else {
+   		exec { 'apc_ini_realpath':
+  			command => "echo 'apc.realpath_cache_size=256k' >> /etc/php.d/apcu.ini; \\
+  			            echo 'apc.realpath_cache_ttl=86400' >> /etc/php.d/apcu.ini;",
+  			unless => 'grep "realpath_cache" /etc/php.d/apcu.ini',
+  			require => Exec [ 'apc_ini' ],
+  		}
+  
+  		exec { 'apc_ini':
+  			command => "sed -i \\
+  						    -e 's/^;\\(apc.enabled\\)=.*/\\1=1/g' \\
+  						    -e 's/^;\\(apc.shm_size\\)=.*/\\1=256M/g' \\
+  						    /etc/php.d/apcu.ini",
+  			unless => 'grep "^apc.enabled=1" /etc/php.d/apcu.ini',
+  			require => [ Package [ $web ], Exec [ 'php_ini' ] ],
+  		}
+    }
+  
 		commontools::yumgroup { '"Development Tools"':
 			ensure => installed,
 			require => Exec [ 'selinux-off-2' ],
