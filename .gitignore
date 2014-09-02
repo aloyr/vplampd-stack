@@ -4,3 +4,4 @@
 config.yml
 data/*
 !data/README.md
+!data/fixmysql.bash
