@@ -23,16 +23,16 @@ class commontools {
 				$epel_source = "http://dl.fedoraproject.org/pub/epel/5/x86_64/epel-release-5-4.noarch.rpm"
 				$remi_package = "remi-release-5.10-1.el5.remi"
 				$remi_source = "http://rpms.famillecollet.com/enterprise/remi-release-5.rpm"
-				$ius_package = "ius-release-1.0-11.ius.centos5"
-				$ius_source = "http://dl.iuscommunity.org/pub/ius/stable/CentOS/5/x86_64/ius-release-1.0-11.ius.centos5.noarch.rpm"
+				$ius_package = "ius-release-1.0-13.ius.centos5"
+				$ius_source = "http://dl.iuscommunity.org/pub/ius/stable/CentOS/5/x86_64/ius-release-1.0-13.ius.centos5.noarch.rpm"
 			}
 			6: {
 				$epel_package = "epel-release-6-8"
 				$epel_source = "http://dl.fedoraproject.org/pub/epel/6/x86_64/epel-release-6-8.noarch.rpm"
 				$remi_package = "remi-release-6.5-1.el6.remi"
 				$remi_source = "http://rpms.famillecollet.com/enterprise/remi-release-6.rpm"
-				$ius_package = "ius-release-1.0-11.ius.centos6"
-				$ius_source = "http://dl.iuscommunity.org/pub/ius/stable/CentOS/6/x86_64/ius-release-1.0-11.ius.centos6.noarch.rpm"
+				$ius_package = "ius-release-1.0-13.ius.centos6"
+				$ius_source = "http://dl.iuscommunity.org/pub/ius/stable/CentOS/6/x86_64/ius-release-1.0-13.ius.centos6.noarch.rpm"
 				exec { 'import_mariadb_rpm':
 					command => "rpm --import https://yum.mariadb.org/RPM-GPG-KEY-MariaDB",
 					unless => 'rpm -qi gpg-pubkey-1bb943db-511147a9 > /dev/null'
