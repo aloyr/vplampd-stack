@@ -59,7 +59,7 @@ class lamp {
 		}
 		package { $web:
 			ensure => installed,
-			require => Package[ $commontools::ius_package ],
+			require => Exec[ 'ius-archive' ],
 		}
 
 		exec { 'php_ini':

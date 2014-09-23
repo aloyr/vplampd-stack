@@ -25,6 +25,8 @@ class commontools {
 				$remi_source = "http://rpms.famillecollet.com/enterprise/remi-release-5.rpm"
 				$ius_package = "ius-release-1.0-13.ius.centos5"
 				$ius_source = "http://dl.iuscommunity.org/pub/ius/archive/CentOS/5/x86_64/ius-release-1.0-13.ius.centos5.noarch.rpm"
+				$ius_cmd = "sed -si '0,/enabled=0/{s/enabled=0/enabled=1/}' /etc/yum.repos.d/ius-archive.repo" 
+				$ius_onlyif = "test `yum repolist --noplugins | grep -E \"ius-archive\" |wc -l ` -eq 0"
 			}
 			6: {
 				$epel_package = "epel-release-6-8"
@@ -33,6 +35,8 @@ class commontools {
 				$remi_source = "http://rpms.famillecollet.com/enterprise/remi-release-6.rpm"
 				$ius_package = "ius-release-1.0-13.ius.centos6"
 				$ius_source = "http://dl.iuscommunity.org/pub/ius/stable/CentOS/6/x86_64/ius-release-1.0-13.ius.centos6.noarch.rpm"
+				$ius_cmd = "true" 
+				$ius_onlyif = "false" 
 				exec { 'import_mariadb_rpm':
 					command => "rpm --import https://yum.mariadb.org/RPM-GPG-KEY-MariaDB",
 					unless => 'rpm -qi gpg-pubkey-1bb943db-511147a9 > /dev/null'
@@ -77,29 +81,16 @@ class commontools {
 		require => Package[ $epel_package ],
 	}
 
-
-	if $operatingsystem == "CentOS" {
-		case $operatingsystemmajrelease {
-			5: {
-				exec { 'ius_archive':
-					command => "sed -si '0,/enabled=0/{s/enabled=0/enabled=1/}' /etc/yum.repos.d/ius-archive.repo",
-					onlyif => "test `yum repolist --noplugins | grep -E \"ius-archive\" |wc -l ` -eq 0",
-					require => Package [ $ius_package ],
-				}
-			}
-			6: {
-				exec { 'ius_archive':
-					command => 'true',
-					onlyif => 'false',
-					require => Package [ $ius_package ],
-				}
-			}
-		}
+	exec { 'ius-archive':
+		command => $ius_cmd,
+		onlyif => $ius_onlyif,
+		require => Package [ $ius_package ],
 	}
+
 	$commonTools = [ 'screen', 'vim-enhanced', 'nano', 'git', 'mlocate', 'which', 'ssmtp', 'yum-utils', 'pv' ]
 	package { $commonTools:
 		ensure => installed,
-		require => Exec[ 'ius_archive' ],
+		require => Exec[ 'ius-archive' ],
 	}
 
 	exec { 'selinux-off-1': 
