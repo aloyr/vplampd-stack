@@ -24,7 +24,7 @@ class commontools {
 				$remi_package = "remi-release-5.10-1.el5.remi"
 				$remi_source = "http://rpms.famillecollet.com/enterprise/remi-release-5.rpm"
 				$ius_package = "ius-release-1.0-13.ius.centos5"
-				$ius_source = "http://dl.iuscommunity.org/pub/ius/archive/CentOS/5/x86_64/ius-release-1.0-13.ius.centos5.noarch.rpm"
+				$ius_source = "http://dl.iuscommunity.org/pub/ius/stable/CentOS/5/x86_64/ius-release-1.0-13.ius.centos5.noarch.rpm"
 				$ius_cmd = "sed -si '0,/enabled=0/{s/enabled=0/enabled=1/}' /etc/yum.repos.d/ius-archive.repo" 
 				$ius_onlyif = "test `yum repolist --noplugins | grep -E \"ius-archive\" |wc -l ` -eq 0"
 			}
