@@ -49,6 +49,7 @@ class commontools {
 		}
 	}
 
+
 	file { 'adjust_timezone':
 		replace => yes,
 		source => "/usr/share/zoneinfo/$zonefile",
@@ -76,10 +77,29 @@ class commontools {
 		require => Package[ $epel_package ],
 	}
 
+
+	if $operatingsystem == "CentOS" {
+		case $operatingsystemmajrelease {
+			5: {
+				exec { 'ius_archive':
+					command => "sed -si '0,/enabled=0/{s/enabled=0/enabled=1/}' /etc/yum.repos.d/ius-archive.repo",
+					onlyif => "test `yum repolist --noplugins | grep -E \"ius-archive\" |wc -l ` -eq 0",
+					require => Package [ $ius_package ],
+				}
+			}
+			6: {
+				exec { 'ius_archive':
+					command => 'true',
+					onlyif => 'false',
+					require => Package [ $ius_package ],
+				}
+			}
+		}
+	}
 	$commonTools = [ 'screen', 'vim-enhanced', 'nano', 'git', 'mlocate', 'which', 'ssmtp', 'yum-utils', 'pv' ]
 	package { $commonTools:
 		ensure => installed,
-		require => Package[ $ius_package ],
+		require => Exec[ 'ius_archive' ],
 	}
 
 	exec { 'selinux-off-1': 
