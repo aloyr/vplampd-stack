@@ -110,4 +110,15 @@ class commontools {
 			enable => false,
 		}
 	}
+
+	exec { 'nodejs':
+		command => 'curl -sL https://rpm.nodesource.com/setup | bash -',
+		creates => '/etc/yum.repos.d/nodesource-el.repo',
+		require => Exec [ 'selinux-off-2' ],
+	}
+
+	package { 'nodejs':
+		ensure => installed,
+		require => Exec [ 'nodejs' ],
+	}
 }
