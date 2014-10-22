@@ -41,7 +41,6 @@ class { 'pre_stage':
 include commonTools
 include lamp
 include drush
-include rvm
 
 if $operatingsystem == 'CentOS' and $operatingsystemmajrelease == '6' {
 	#include nodejs
