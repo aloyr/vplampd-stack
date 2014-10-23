@@ -181,12 +181,16 @@ class commontools {
 			user => 'vagrant',
 		}
 
+		file { 'grunt_file':
+			path => '/usr/local/bin/gruntwatch',
+			ensure => file,
+			content => template('commontools/gruntwatch.erb'),
+			mode => 'a+x',
+		}
+
 		exec { 'grunt_watch':
-			command => 'bash --login -c \' \
-						rvm use 1.9.3; \
-						cd $webroot/sites/all/themes/$themename; \
-						nohup grunt watch 0<&- &>grunt.log &\'',
-			require => Exec [ 'ad_build_nonroot' ],
+			command => '/usr/local/bin/gruntwatch',
+			require => [ Exec [ 'ad_build_nonroot' ], File [ 'grunt_file' ], ],
 			unless => 'pidof grunt >/dev/null',
 		}
 	}
