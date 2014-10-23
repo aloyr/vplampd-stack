@@ -111,14 +111,83 @@ class commontools {
 		}
 	}
 
-	exec { 'nodejs':
-		command => 'curl -sL https://rpm.nodesource.com/setup | bash -',
-		creates => '/etc/yum.repos.d/nodesource-el.repo',
-		require => Exec [ 'selinux-off-2' ],
-	}
+	if defined('$themename') {
 
-	package { 'nodejs':
-		ensure => installed,
-		require => Exec [ 'nodejs' ],
+		exec { 'nodejs':
+			command => 'curl -sL https://rpm.nodesource.com/setup | bash -',
+			creates => '/etc/yum.repos.d/nodesource-el.repo',
+			require => Exec [ 'selinux-off-2' ],
+		}
+
+		package { 'nodejs':
+			ensure => installed,
+			require => Exec [ 'nodejs' ],
+		}
+
+		exec { 'rvm':
+			command => 'curl -sSL https://get.rvm.io | bash -',
+			creates => '/usr/local/rvm/bin/rvm',
+			require => Package [ 'nodejs' ],
+		}
+
+	 	exec { 'libffi':
+			command => 'rpm -Uvh http://yum.puppetlabs.com/el/5/dependencies/x86_64/libffi-3.0.5-2.el5.x86_64.rpm',
+			creates => '/usr/lib64/libffi.so.5.0.6',
+			require => Exec [ 'rvm' ],
+		}
+
+	 	exec { 'libffi-devel':
+			command => 'rpm -Uvh --nodeps http://yum.puppetlabs.com/el/5/dependencies/x86_64/libffi-devel-3.0.5-2.el5.x86_64.rpm',
+			creates => '/usr/lib64/libffi-3.0.5/include/ffi.h',
+			require => Exec [ 'libffi' ],
+		}
+
+		$yaml = ['libyaml', 'libyaml-devel']
+		package { $yaml:
+			ensure => installed,
+			require => Exec ['libffi-devel'],
+		}
+
+	 	exec { 'yaml_rvm':
+			command => 'rvm pkg install libyaml',
+			creates => '/usr/local/rvm/usr/lib/libyaml.a',
+			require => Exec [ 'libffi-devel' ],
+		}
+
+	  	exec { 'ruby193':
+			command => 'rvm reinstall 1.9.3 --with-libyaml',
+			creates => '/usr/local/rvm/rubies/ruby-1.9.3-p547/bin/ruby',
+			require => Exec [ 'yaml_rvm' ],
+		}
+
+	  	exec { 'ad_build_root':
+			command => 'rvm use 1.9.3; \
+						gem install bundler; \
+						npm install -g bower; \
+						npm install -g grunt-cli;',
+			creates => "/usr/lib/node_modules/grunt-cli",
+			require => Exec [ 'ruby193' ],
+		}
+
+		exec { 'ad_build_nonroot':
+			command => 'rvm use 1.9.3; \
+						cd $webroot/sites/all/themes/$themename; \
+						npm install; \
+						bower install; \
+						bundle install; \
+						grunt;',
+			creates => "$webroot/sites/all/themes/$themename/node_modules",
+			require => Exec [ 'ad_build_root' ],
+			user => 'vagrant',
+		}
+
+		exec { 'grunt_watch':
+			command => 'bash --login -c \' \
+						rvm use 1.9.3; \
+						cd $webroot/sites/all/themes/$themename; \
+						nohup grunt watch 0<&- &>grunt.log &\'',
+			require => Exec [ 'ad_build_nonroot' ],
+			unless => 'pidof grunt >/dev/null',
+		}
 	}
 }
