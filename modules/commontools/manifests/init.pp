@@ -149,33 +149,33 @@ class commontools {
 		}
 
 	 	exec { 'yaml_rvm':
-			command => 'rvm pkg install libyaml',
+			command => 'bash --login -c \'rvm pkg install libyaml\'',
 			creates => '/usr/local/rvm/usr/lib/libyaml.a',
 			require => Exec [ 'libffi-devel' ],
 		}
 
 	  	exec { 'ruby193':
-			command => 'rvm reinstall 1.9.3 --with-libyaml',
+			command => 'bash --login -c \'rvm reinstall 1.9.3 --with-libyaml\'',
 			creates => '/usr/local/rvm/rubies/ruby-1.9.3-p547/bin/ruby',
 			require => Exec [ 'yaml_rvm' ],
 		}
 
 	  	exec { 'ad_build_root':
-			command => 'rvm use 1.9.3; \
+			command => 'bash --login -c \'rvm use 1.9.3; \
 						gem install bundler; \
 						npm install -g bower; \
-						npm install -g grunt-cli;',
+						npm install -g grunt-cli;\'',
 			creates => "/usr/lib/node_modules/grunt-cli",
 			require => Exec [ 'ruby193' ],
 		}
 
 		exec { 'ad_build_nonroot':
-			command => 'rvm use 1.9.3; \
+			command => 'bash --login -c \'rvm use 1.9.3; \
 						cd $webroot/sites/all/themes/$themename; \
 						npm install; \
 						bower install; \
 						bundle install; \
-						grunt;',
+						grunt;\'',
 			creates => "$webroot/sites/all/themes/$themename/node_modules",
 			require => Exec [ 'ad_build_root' ],
 			user => 'vagrant',
