@@ -252,6 +252,9 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     if ENV['REDODB'] == 'yes'
       puppet.facter['redodb'] = 'y'
     end
+    if settings['themename'] != nil
+      puppet.facter['themename'] = settings['themename']
+    end
   end
   config.trigger.before :provision do
     File.delete('data/insertlanguages.sql') if File.exist?('data/insertlanguages.sql')

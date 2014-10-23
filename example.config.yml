@@ -2,6 +2,7 @@ timezone: "America/Chicago"
 hostname: "example.dev"
 hostip: 192.168.33.10
 webroot: "/var/www/example-site/example"
+themename: "zen"
 
 aliases:
   - "www.example.dev"
