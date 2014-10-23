@@ -155,7 +155,8 @@ class commontools {
 		}
 
 	  	exec { 'ruby193':
-			command => 'bash --login -c \'rvm reinstall 1.9.3 --with-libyaml\'',
+			command => 'bash --login -c \'rvm reinstall 1.9.3 --with-libyaml;
+						rvm reset;\'',
 			creates => '/usr/local/rvm/rubies/ruby-1.9.3-p547/bin/ruby',
 			require => Exec [ 'yaml_rvm' ],
 		}
@@ -164,7 +165,8 @@ class commontools {
 			command => 'bash --login -c \'rvm use 1.9.3; \
 						gem install bundler; \
 						npm install -g bower; \
-						npm install -g grunt-cli;\'',
+						npm install -g grunt-cli;
+						rvm reset;\'',
 			creates => "/usr/lib/node_modules/grunt-cli",
 			require => Exec [ 'ruby193' ],
 		}
@@ -175,7 +177,8 @@ class commontools {
 						npm install; \
 						bower install; \
 						bundle install; \
-						grunt;\'',
+						grunt;
+						rvm reset;\'',
 			creates => "$webroot/sites/all/themes/$themename/node_modules",
 			require => Exec [ 'ad_build_root' ],
 			user => 'vagrant',
