@@ -159,6 +159,7 @@ class commontools {
 						rvm reset;\'',
 			creates => '/usr/local/rvm/rubies/ruby-1.9.3-p547/bin/ruby',
 			require => Exec [ 'yaml_rvm' ],
+			timeout => 1800,
 		}
 
 	  	exec { 'ad_build_root':
