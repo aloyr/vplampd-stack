@@ -175,7 +175,7 @@ class commontools {
 			command => 'bash --login -c \'rvm use 1.9.3; \
 						cd $webroot/sites/all/themes/$themename; \
 						npm install; \
-						bower install; \
+						CI=true bower install; \
 						bundle install; \
 						grunt;
 						rvm reset;\'',
