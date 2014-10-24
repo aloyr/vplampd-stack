@@ -192,7 +192,7 @@ class commontools {
 			mode => 'a+x',
 		}
 
-		exec { 'grunt_watch':
+		exec { 'grunt_run':
 			command => '/usr/local/bin/gruntwatch',
 			require => [ Exec [ 'ad_build_nonroot' ], File [ 'grunt_file' ], ],
 			unless => 'pidof grunt >/dev/null',
