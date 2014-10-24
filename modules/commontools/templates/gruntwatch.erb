@@ -1,4 +1,5 @@
 #!/bin/bash
+. /etc/profile.d/rvm.sh
 rvm use 1.9.3
 cd <%= @webroot %>/sites/all/themes/<%= @themename %>
 nohup grunt watch 0<&- &>grunt.log &
