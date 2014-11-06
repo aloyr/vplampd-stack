@@ -1,12 +1,17 @@
 timezone: "America/Chicago"
+# the main hostname of the vagrant box
 hostname: "example.dev"
 hostip: 192.168.33.10
 webroot: "/var/www/example-site/example"
+# themename is used to setup a grunt/compass build process
 themename: "zen"
 
+# aliases you will want in the apache stanza
 aliases:
   - "www.example.dev"
 
+# setup additional hosts that point to the same apache site
+# used to configure a multi-language site build
 languages:
   - {"de": "de.example.dev"}
   - {"es": "es.example.dev"}
@@ -18,14 +23,28 @@ languages:
   - {"ru": "ru.example.dev"}
   - {"zh-hans": "zh-hans.example.dev"}
 
+# shares setup by vagrant
+# at a minimum, it should point map your local copy of the site
+# to the vagrant box document root of the site
+# one of the vm items should match or be a parent of the folder 
+# setup as webroot above
 shares:
   - {local: "~/Sites/example-site", vm: "/var/www/example-site"}
 
+# additional configuration for port forwarding
+# normal access is done through manipulation of your local hosts file
+# but this allows other clients to point to your IP address on the ports below
+# and access services on your vagrant box
 ports:
   - {local: 4567, vm: 80}
 
+# database configuration that will be used on the mysql server in the box
+# also used on the settings file
 database: {name: "example", user: "example", pass: "example", file: "example.sql"}
 
+# non-destructively modify your local site's settings.php file
+# everything below is undone when you halt or destroy your vagrant box
+# this sets up several items that customize and optimize your drupal install
 settingsphp:
   - "$conf['cache_backends'][] = 'sites/all/modules/memcache/memcache.inc';"
   - "$conf['cache_default_class'] = 'MemCacheDrupal';"
