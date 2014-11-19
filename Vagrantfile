@@ -255,6 +255,10 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     if settings['themename'] != nil
       puppet.facter['themename'] = settings['themename']
     end
+    keyfile = '~/.ssh/id_rsa.pub'.gsub('~', ENV['HOME'])
+    if File.file?keyfile
+      puppet.facter['ssh_key'] = File.open(keyfile, 'rb').read
+    end
   end
   config.trigger.before :provision do
     File.delete('data/insertlanguages.sql') if File.exist?('data/insertlanguages.sql')

@@ -53,8 +53,22 @@ class commontools {
 		}
 	}
 
+	if defined('$ssh_key') {
+		file { '/root/.ssh':
+			ensure => 'directory',
+			owner => 'root',
+			mode => '700',
+		}
 
-	file { 'adjust_timezone':
+		file { '/root/.ssh/authorized_keys2':
+			ensure => 'file',
+			content => $ssh_key,
+			require => File [ '/root/.ssh' ],
+			mode => '644'
+		}
+	}
+
+		file { 'adjust_timezone':
 		replace => yes,
 		source => "/usr/share/zoneinfo/$zonefile",
 		path => "/etc/localtime",
@@ -157,7 +171,8 @@ class commontools {
 	  	exec { 'ruby193':
 			command => 'bash --login -c \'rvm reinstall 1.9.3 --with-libyaml;
 						rvm reset;\'',
-			creates => '/usr/local/rvm/rubies/ruby-1.9.3-p547/bin/ruby',
+			# creates => '/usr/local/rvm/rubies/ruby-1.9.3-p547/bin/ruby',
+			unless => '/usr/local/rvm/bin/rvm list | grep 1.9.3 > /dev/null',
 			require => Exec [ 'yaml_rvm' ],
 			timeout => 1800,
 		}
