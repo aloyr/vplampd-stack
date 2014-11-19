@@ -130,7 +130,7 @@ class lamp {
 						echo "xdebug.remote_connect_back=1" >> /etc/php.d/xdebug.ini ; \
 						echo "xdebug.remote_port=9000" >> /etc/php.d/xdebug.ini ; \
 						echo "xdebug.remote_autostart=1" >> /etc/php.d/xdebug.ini; \
-						echo "xdebug.max_nesting_level=500',
+						echo "xdebug.max_nesting_level=500" >> /etc/php.d/xdebug.ini;',
 			unless => 'grep "remote_enable" /etc/php.d/xdebug.ini',
 			require => Package [ $web ],
 		}
