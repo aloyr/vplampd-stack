@@ -3,6 +3,7 @@
   <%= @serveralias %>
   DocumentRoot <%= @webroot %>
   <Directory <%= @webroot %>>
+  	EnableSendFile Off
     AllowOverride All
   </Directory>
 </Virtualhost>
