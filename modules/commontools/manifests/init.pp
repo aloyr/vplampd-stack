@@ -191,9 +191,9 @@ class commontools {
 			command => 'bash --login -c \'rvm use 1.9.3; \
 						cd $webroot/sites/all/themes/$themename; \
 						npm install; \
-						CI=true bower install; \
+						CI=true bower install --allow-root; \
 						bundle install; \
-						grunt;
+						grunt --force; \
 						rvm reset;\'',
 			creates => "$webroot/sites/all/themes/$themename/node_modules",
 			require => Exec [ 'ad_build_root' ],
