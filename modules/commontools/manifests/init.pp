@@ -178,24 +178,24 @@ class commontools {
 		}
 
 	  	exec { 'ad_build_root':
-			command => 'bash --login -c \'rvm use 1.9.3; \
-						cd $webroot/sites/all/themes/$themename; \
-						gem install bundler; \
-						npm install -g bower; \
-						npm install -g grunt-cli; \
-						npm install; \
-						CI=true bower install --allow-root; \
-						bundle install; \
-						rvm reset;\'',
+			command => "bash --login -c 'rvm use 1.9.3; 
+						cd $webroot/sites/all/themes/$themename; 
+						gem install bundler; 
+						npm install -g bower; 
+						npm install -g grunt-cli; 
+						npm install; 
+						CI=true bower install --allow-root; 
+						bundle install; 
+						rvm reset;'",
 			creates => "/usr/lib/node_modules/grunt-cli",
 			require => Exec [ 'ruby193' ],
 		}
 
 		exec { 'ad_build_nonroot':
-			command => 'bash --login -c \'rvm use 1.9.3; \
-						cd $webroot/sites/all/themes/$themename; \
-						grunt --force; \
-						rvm reset;\'',
+			command => "bash --login -c 'rvm use 1.9.3; 
+						cd $webroot/sites/all/themes/$themename; 
+						grunt --force; 
+						rvm reset;'",
 			# creates => "$webroot/sites/all/themes/$themename/node_modules",
 			require => Exec [ 'ad_build_root' ],
 			# user => 'vagrant',
