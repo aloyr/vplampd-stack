@@ -179,6 +179,7 @@ class commontools {
 
 	  	exec { 'ad_build_root':
 			command => 'bash --login -c \'rvm use 1.9.3; \
+						cd $webroot/sites/all/themes/$themename; \
 						gem install bundler; \
 						npm install -g bower; \
 						npm install -g grunt-cli; \
