@@ -181,7 +181,10 @@ class commontools {
 			command => 'bash --login -c \'rvm use 1.9.3; \
 						gem install bundler; \
 						npm install -g bower; \
-						npm install -g grunt-cli;
+						npm install -g grunt-cli; \
+						npm install; \
+						CI=true bower install --allow-root; \
+						bundle install; \
 						rvm reset;\'',
 			creates => "/usr/lib/node_modules/grunt-cli",
 			require => Exec [ 'ruby193' ],
@@ -190,14 +193,11 @@ class commontools {
 		exec { 'ad_build_nonroot':
 			command => 'bash --login -c \'rvm use 1.9.3; \
 						cd $webroot/sites/all/themes/$themename; \
-						npm install; \
-						CI=true bower install --allow-root; \
-						bundle install; \
 						grunt --force; \
 						rvm reset;\'',
-			creates => "$webroot/sites/all/themes/$themename/node_modules",
+			# creates => "$webroot/sites/all/themes/$themename/node_modules",
 			require => Exec [ 'ad_build_root' ],
-			user => 'vagrant',
+			# user => 'vagrant',
 		}
 
 		file { 'grunt_file':

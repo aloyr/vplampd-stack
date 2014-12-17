@@ -253,7 +253,10 @@ class lamp {
 
 		if defined('$redodb') {
 			exec { 'reprovision_dbfile':
-				command => "mysql $dbname < /vagrant/data/$dbfile"
+				command => "bash --login -c ' \
+				            echo drop database $dbame | mysql; \
+				            echo create database $dbame | mysql; \
+				            mysql $dbname < /vagrant/data/$dbfile'"
 			}
 		}
 
