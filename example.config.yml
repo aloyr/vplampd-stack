@@ -5,7 +5,8 @@ hostip: 192.168.33.10
 webroot: "/var/www/example-site/example"
 # themename is used to setup a grunt/compass build process
 themename: "zen"
-# drush alias - will be setup under the "local" namespace
+# drush alias - will be setup under the "vagrant" namespace 
+# i.e.: the example below would be accessible under "drush @vagrant.example st"
 drushalias: "example"
 
 # aliases you will want in the apache stanza

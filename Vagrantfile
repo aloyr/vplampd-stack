@@ -126,6 +126,42 @@ def adjustSettingsFile settings, vagstring
   writefile.close()
 end
 
+def resetDrushAliasFile settings, vagstring
+  settingsfile = '~/.drush/vagrant.aliases.drushrc.php'.gsub('~', ENV['HOME'])
+  removeString = vagstring.gsub("\n",'')
+  if File.file?settingsfile
+    puts 'Restoring drush alias file'
+    File.chmod(0666, settingsfile)
+    settingslines = File.open(settingsfile,'r').readlines()
+    writefile = File.open(settingsfile,'w+')
+    settingslines.each do |line|
+      writefile.write(line) if line !~ /#{removeString}/
+    end
+    writefile.close()
+  end
+end
+
+def adjustDrushAliasFile settings, vagstring
+  resetDrushAliasFile settings, vagstring
+  puts 'Adjusting drush alias file'
+  settingsfile = '~/.drush/vagrant.aliases.drushrc.php'.gsub('~', ENV['HOME'])
+  if not File.file?settingsfile
+    File.open(settingsfile, 'w+') do |writefile|
+      writefile.puts '<?php'
+    end
+  end
+  File.chmod(0666, settingsfile)
+  if settings['drushalias'] != nil
+    File.open(settingsfile,'a+') do |writefile|
+      writefile.puts "$aliases['#{settings['drushalias']}'] = array(  #{vagstring}"
+      writefile.puts "  'root' => '#{settings['webroot']}',           #{vagstring}"
+      writefile.puts "  'uri'  => 'http://#{settings['hostname']}',   #{vagstring}"
+      writefile.puts "  'remote-host'  => '#{settings['hostname']}',  #{vagstring}"
+      writefile.puts ");                                              #{vagstring}"
+    end
+  end
+end
+
 # Vagrantfile API/syntax version. Don't touch unless you know what you're doing!
 VAGRANTFILE_API_VERSION = "2"
 
@@ -268,9 +304,11 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   vagstring = ' ## vagrant-provisioner' + "\n"
   config.trigger.before :provision do
     adjustSettingsFile settings, vagstring
+    adjustDrushAliasFile settings, vagstring
   end
 
   config.trigger.before :destroy do
     resetSettingsFile settings, vagstring
+    resetDrushAliasFile settings, vagstring
   end
 end
