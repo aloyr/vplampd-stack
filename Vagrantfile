@@ -252,7 +252,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   # View the documentation for the provider you're using for more
   # information on available options.
 
-  config.vm.provision :shell, :inline => "if [ ! `rpm -q puppet | grep -E '^puppet-3'` ]; then echo 'nameserver #{dnsServer}' > /etc/resolv.conf; yum update -y puppet; yum update -y rubygem-json; fi"
+  config.vm.provision :shell, :inline => "if [ ! `rpm -q puppet | grep -E '^puppet-3'` ]; then echo home.local > /etc/resolv.conf; echo 'nameserver #{dnsServer}' >> /etc/resolv.conf; yum update -y puppet; yum update -y rubygem-json; fi"
 
 
   # Enable provisioning with Puppet stand alone.  Puppet manifests
