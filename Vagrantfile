@@ -230,8 +230,12 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   # config.vm.synced_folder "../data", "/vagrant_data"
   config.vm.synced_folder ".", "/vagrant",  :mount_options => ["dmode=777,fmode=766"]
   settings['shares'].each do |item|
-    config.vm.synced_folder item['local'], item['vm'], mount_options: ["dmode=777,fmode=766,uid=48,gid=48"]
-    settings['local'] = item['local'] if item['vm'] == settings['webroot']
+    if item['vm'] == settings['webroot']
+      settings['local'] = item['local'] #if item['vm'] == settings['webroot']
+      config.vm.synced_folder item['local'], item['vm'], type: 'rsync', rsync__exclude: '.git/', rsync__auto: true
+    else
+      config.vm.synced_folder item['local'], item['vm'], mount_options: ["dmode=777,fmode=766,uid=48,gid=48"]
+    end
   end
 
   # Provider-specific configuration so you can fine-tune various
