@@ -62,4 +62,11 @@ class drush {
 		source => 'https://raw.githubusercontent.com/aloyr/system_config_files/master/dotfiles/set_prompt.sh',
 		mode => 0755,
 	}
+
+	file { '/etc/profile.d/drush-alias.sh':
+		ensure => file,
+		content => "alias drush='/usr/local/bin/drush -r $webroot'",
+		mode => 0755,
+		require => Exec [ 'drush' ],
+  }
 }
