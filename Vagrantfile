@@ -93,7 +93,7 @@ def adjustSettingsFile settings, vagstring
   settingsfile = settings['local'].gsub('~', ENV['HOME']) + '/sites/default/settings.php'
   if not File.file?settingsfile
     defsettingsfile = settings['local'].gsub('~', ENV['HOME']) + '/sites/default/default.settings.php'
-    cp(defsettingsfile, settingsfile)
+    FileUtils.cp(defsettingsfile, settingsfile)
   end
   File.chmod(0666, settingsfile)
   settingslines = File.open(settingsfile,'r').readlines()
