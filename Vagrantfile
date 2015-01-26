@@ -88,13 +88,14 @@ def resetSettingsFile settings, vagstring
 end
 
 def adjustSettingsFile settings, vagstring
-  resetSettingsFile settings, vagstring
-  puts 'Adjusting settings.php file'
   settingsfile = settings['local'].gsub('~', ENV['HOME']) + '/sites/default/settings.php'
   if not File.file?settingsfile
     defsettingsfile = settings['local'].gsub('~', ENV['HOME']) + '/sites/default/default.settings.php'
     FileUtils.cp(defsettingsfile, settingsfile)
+  else
+    resetSettingsFile settings, vagstring
   end
+  puts 'Adjusting settings.php file'
   File.chmod(0666, settingsfile)
   settingslines = File.open(settingsfile,'r').readlines()
   writefile = File.open(settingsfile,'w+')
@@ -308,12 +309,18 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   # provisioning triggers stuff below
   vagstring = ' ## vagrant-provisioner' + "\n"
   config.trigger.before :provision do
+    puts 'Running before provision triggers'
     adjustSettingsFile settings, vagstring
     adjustDrushAliasFile settings, vagstring
+    puts 'Synching changed files'
+    `vagrant rsync`
   end
 
   config.trigger.before :destroy do
+    puts 'Running before destroy triggers'
     resetSettingsFile settings, vagstring
     resetDrushAliasFile settings, vagstring
+    puts 'Synching changed files'
+    `vagrant rsync`
   end
 end
