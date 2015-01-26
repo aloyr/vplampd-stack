@@ -69,4 +69,15 @@ class drush {
 		mode => 0755,
 		require => Exec [ 'drush' ],
   }
+
+  file { "$webroot/sites/default/files"
+  	ensure => directory,
+  	mode => 777,
+		require => Exec [ 'drush' ],
+  }
+  
+  file { "$webroot/sites/hidglobal.com"
+  	ensure => directory,
+  	mode => 777,
+		require => Exec [ 'drush' ],
 }
