@@ -136,7 +136,7 @@ def resetDrushAliasFile settings, vagstring
     settingslines = File.open(settingsfile,'r').readlines()
     writefile = File.open(settingsfile,'w+')
     settingslines.each do |line|
-      writefile.write(line) if line !~ /#{removeString}/
+      writefile.write(line) if line !~ /#{removeString}-#{settings['drushalias']}/
     end
     writefile.close()
   end
@@ -154,11 +154,11 @@ def adjustDrushAliasFile settings, vagstring
   File.chmod(0666, settingsfile)
   if settings['drushalias'] != nil
     File.open(settingsfile,'a+') do |writefile|
-      writefile.puts "$aliases['#{settings['drushalias']}'] = array(  #{vagstring}"
-      writefile.puts "  'root' => '#{settings['webroot']}',           #{vagstring}"
-      writefile.puts "  'uri'  => 'http://#{settings['hostname']}',   #{vagstring}"
-      writefile.puts "  'remote-host'  => '#{settings['hostname']}',  #{vagstring}"
-      writefile.puts ");                                              #{vagstring}"
+      writefile.puts "$aliases['#{settings['drushalias']}'] = array(  #{vagstring}-#{settings['drushalias']}"
+      writefile.puts "  'root' => '#{settings['webroot']}',           #{vagstring}-#{settings['drushalias']}"
+      writefile.puts "  'uri'  => 'http://#{settings['hostname']}',   #{vagstring}-#{settings['drushalias']}"
+      writefile.puts "  'remote-host'  => '#{settings['hostname']}',  #{vagstring}-#{settings['drushalias']}"
+      writefile.puts ");                                              #{vagstring}-#{settings['drushalias']}"
     end
   end
 end
