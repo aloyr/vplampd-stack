@@ -129,7 +129,7 @@ end
 
 def resetDrushAliasFile settings, vagstring
   settingsfile = '~/.drush/vagrant.aliases.drushrc.php'.gsub('~', ENV['HOME'])
-  removeString = vagstring.gsub("\n",'')
+  removeString = vagstring.gsub("\n",'') + '-' + settings['drushalias']
   if File.file?settingsfile
     puts 'Restoring drush alias file'
     File.chmod(0666, settingsfile)
@@ -153,12 +153,13 @@ def adjustDrushAliasFile settings, vagstring
   end
   File.chmod(0666, settingsfile)
   if settings['drushalias'] != nil
+    tagstring = vagstring.gsub("\n",'') + "-" + settings['drushalias'] + "\n"
     File.open(settingsfile,'a+') do |writefile|
-      writefile.puts "$aliases['#{settings['drushalias']}'] = array(  #{vagstring}-#{settings['drushalias']}"
-      writefile.puts "  'root' => '#{settings['webroot']}',           #{vagstring}-#{settings['drushalias']}"
-      writefile.puts "  'uri'  => 'http://#{settings['hostname']}',   #{vagstring}-#{settings['drushalias']}"
-      writefile.puts "  'remote-host'  => '#{settings['hostname']}',  #{vagstring}-#{settings['drushalias']}"
-      writefile.puts ");                                              #{vagstring}-#{settings['drushalias']}"
+      writefile.puts "$aliases['#{settings['drushalias']}'] = array(  #{tagstring}"
+      writefile.puts "  'root' => '#{settings['webroot']}',           #{tagstring}"
+      writefile.puts "  'uri'  => 'http://#{settings['hostname']}',   #{tagstring}"
+      writefile.puts "  'remote-host'  => '#{settings['hostname']}',  #{tagstring}"
+      writefile.puts ");                                              #{tagstring}"
     end
   end
 end
