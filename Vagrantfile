@@ -131,12 +131,13 @@ def resetDrushAliasFile settings, vagstring
   settingsfile = '~/.drush/vagrant.aliases.drushrc.php'.gsub('~', ENV['HOME'])
   removeString = vagstring.gsub("\n",'') + '-' + settings['drushalias']
   if File.file?settingsfile
+    tagstring = vagstring.gsub("\n",'') + "-" + settings['drushalias'] + "\n"
     puts 'Restoring drush alias file'
     File.chmod(0666, settingsfile)
     settingslines = File.open(settingsfile,'r').readlines()
     writefile = File.open(settingsfile,'w+')
     settingslines.each do |line|
-      writefile.write(line) if line !~ /#{removeString}-#{settings['drushalias']}/
+      writefile.write(line) if line !~ /#{tagstring}/
     end
     writefile.close()
   end
