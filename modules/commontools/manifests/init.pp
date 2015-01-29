@@ -209,7 +209,10 @@ class commontools {
 		}
 
 		exec { 'grunt_run':
-			command => '/usr/local/bin/gruntwatch',
+			command => "bash --login -c 'rvm use 1.9.3; 
+						cd $webroot/sites/all/themes/$themename; 
+						/usr/local/bin/gruntwatch &
+						rvm reset;'",
 			require => [ Exec [ 'ad_build_nonroot' ], File [ 'grunt_file' ], ],
 			unless => 'pidof grunt >/dev/null',
 		}
