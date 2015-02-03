@@ -174,6 +174,12 @@ class lamp {
 			unless => "grep 'includedir'  $dbcnf",
 			require => File [ 'mysql_optimizations' ]
 		}
+		cron { fixmysql:
+		  command => "/vagrant/data/fixmysql.bash",
+		  user    => root,
+		  minute  => '*',
+		  require => Exec[ 'mysql_include' ]
+		}
 
 		file { 'http_site':
 			ensure => file,
