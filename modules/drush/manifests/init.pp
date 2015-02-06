@@ -48,7 +48,7 @@ class drush {
 
 	if defined('$dbfile') {
 		exec { 'drush_enable_modules':
-			command => "/usr/local/bin/drush -r $webroot -y en stage_file_proxy devel xhprof memcache memcache_admin update language_domains",
+			command => "/usr/local/bin/drush -r $webroot -y en stage_file_proxy devel xhprof memcache memcache_admin update language_domains views_ui context_ui field_ui",
 			require => defined('$redodb') ? {
 				false => [ File [ '/usr/local/bin/drush'], Service [ $lamp::dbservice ], Exec [ 'setup_dbfile' ], ],
 				true  => [ File [ '/usr/local/bin/drush'], Service [ $lamp::dbservice ], Exec [ 'reprovision_dbfile' ], ],
