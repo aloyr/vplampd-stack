@@ -174,17 +174,20 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   # please see the online documentation at vagrantup.com.
 
   # Every Vagrant virtual environment requires a box to build off of.
-  config.vm.box = "centos56"
-  config.vm.box_url = "https://dl.dropbox.com/u/7196/vagrant/CentOS-56-x64-packages-puppet-2.6.10-chef-0.10.6.box"
+  config.vm.box = settings['box'].nil? ? "centos56" : settings['box']
+  config.vm.box_url = settings['box_url'].nil? ? "https://dl.dropbox.com/u/7196/vagrant/CentOS-56-x64-packages-puppet-2.6.10-chef-0.10.6.box" : settings['box_url']
 
-  # if Vagrant.has_plugin?("vagrant-cachier")
-    # config.cache.scope = :box
+  if Vagrant.has_plugin?("vagrant-cachier")
+    config.cache.scope = :box
+    config.cache.auto_detect = false
+    config.cache.enable :yum
+    # config.cache.enable :npm
 
     # config.cache.synced_folder_opts = {
     #   type: :nfs,
     #   mount_options: ['rw', 'vers=3', 'tcp', 'nolock']
     # }
-  # end
+  end
 
   # Disable automatic box Update checking. If you disable this, then
   # boxes will only be checked for updates when the user runs
@@ -310,7 +313,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
   # provisioning triggers stuff below
   vagstring = ' ## vagrant-provisioner' + "\n"
-  config.trigger.before :provision do
+  config.trigger.before [:provision, :up, :resume] do
     puts 'Running before provision triggers'
     adjustSettingsFile settings, vagstring
     adjustDrushAliasFile settings, vagstring
@@ -318,7 +321,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     `vagrant rsync`
   end
 
-  config.trigger.before :destroy do
+  config.trigger.before [:destroy, :halt, :suspend] do
     puts 'Running before destroy triggers'
     resetSettingsFile settings, vagstring
     resetDrushAliasFile settings, vagstring
