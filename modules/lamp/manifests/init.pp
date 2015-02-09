@@ -195,7 +195,12 @@ class lamp {
 		service { 'httpd':
 			ensure => running,
 			enable => true,
-			require => [ Exec [ $webservicesreq, php_ini, apc_ini ], Package [ $web ] ],
+			require => [ Exec [ $webservicesreq, php_ini, apc_ini ], Package [ $web ], File [ 'http_site' ] ],
+		}
+
+		exec { 'http_restart':
+			command => '/etc/init.d/httpd restart',
+			require => Service [ 'httpd' ],
 		}
 
 		exec { 'memcached_config':
