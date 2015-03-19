@@ -10,7 +10,8 @@ raise Vagrant::Errors::VagrantError.new, "ERROR: config.yml file missing." if no
 
 # setup settings variable, dnsserver and some defaults
 settings = YAML.load_file('config.yml')
-dnsServer = `scutil --dns|awk '$0 ~ /nameserver/ {printf $3; exit}'`
+# dnsServer = `scutil --dns|awk '$0 ~ /nameserver/ {printf $3; exit}'`
+dnsServer = '8.8.8.8'
 defaults = {'timezone'=> 'America/Chicago', 
             'hostname'=> Socket.gethostname + '.dev', 
             'webroot'=> '/var/www/hid',
