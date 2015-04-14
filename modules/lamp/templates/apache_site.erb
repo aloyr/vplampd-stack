@@ -1,3 +1,9 @@
+RewriteEngine On
+RewriteCond %{REQUEST_METHOD} ^TRACE
+RewriteRule .* - [F]
+TraceEnable off
+ServerSignature Off
+ServerTokens Prod
 <Virtualhost *:80>
   ServerName <%= @webhost %>
   <%= @serveralias %>
