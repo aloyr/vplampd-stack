@@ -40,6 +40,7 @@ end
   {'name' => 'database user', 'value' => settings['database']['user']},
   {'name' => 'database pass', 'value' => settings['database']['pass']},
   {'name' => 'database file', 'value' => settings['database']['file']},
+  {'name' => 'drush alias',   'value' => settings['drushalias']},
 ].each do |item|
   checkErrors item
 end
