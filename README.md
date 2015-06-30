@@ -16,5 +16,5 @@ Instructions
 	vim config.yml
 - Ask a fellow dev for a copy of the HID DB, as well as their config.yml file.
 - Using the other dev's config.yml file as a template, modify the config.yml file you copied from example.config.yml.
-- Get a recent copy of the HID DB and put it in the same folder as config.yml.
+- Get a recent mysql dump of the HID DB, rename it to "HIDGlobal.mysql," and put it in the same folder as config.yml.
 - Run "vagrant up" from that location.
