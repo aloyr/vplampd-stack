@@ -26,4 +26,5 @@ Instructions
 - Create a ".drush" folder in your home directory.
 	In terminal:
 	mkdir ~/.drush
+- 	Ideally, you could also properly install drush on your host box, but that's not necessary for this process.
 - In terminal, run "sudo vagrant up" inside the vplampd-stack-master folder.
