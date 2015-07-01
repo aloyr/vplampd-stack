@@ -28,3 +28,12 @@ Instructions
 	mkdir ~/.drush
 - 	Ideally, you could also properly install drush on your host box, but that's not necessary for this process.
 - In terminal, run "sudo vagrant up" inside the vplampd-stack-master folder.
+- If all works well, run the grunt build in order to use the current CSS / JS.
+	In terminal:
+	ssh vagrant@hidglobal.dev (password: vagrant)
+	cd [location of the new theme folder on the vagrant box]
+	nvm install 0.10.32; nvm use v0.10.32; rvm install 1.9.3; rvm use 1.9.3; npm install; CI=true bower install --allow-root; bundle install; grunt
+- Navigate to www.hidglobal.dev on your host box's browser
+- Clear Drupal cache (if needed)
+- Voila! All set!
+	
