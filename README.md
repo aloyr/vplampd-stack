@@ -8,8 +8,7 @@ Prerequisites
 	sudo vagrant plugin install vagrant-cachier vagrant-hostsupdater vagrant-triggers
 - You will also need VirtualBox installed:
  	https://www.virtualbox.org/wiki/Downloads
-- You will need to pull a branch of the HID site from github, and place it in a location on your local instance (ie,  ~/Sites/HID-Global-new-theme/hid)
-	https://github.com/HID-GS/HID-Global
+- You will need to pull a branch of your site from github (ie, https://github.com/HID-GS/HID-Global), and place it in the location specified in the "shares" section of config.yml (ie,  ~/Sites/HID-Global-new-theme/hid)
 
 Instructions
 	
@@ -20,20 +19,20 @@ Instructions
 	In terminal:
 	cp {example.,config.yml}
 	vim config.yml
-- Ask a fellow dev for a copy of the HID DB, as well as their config.yml file.
+- Ask a fellow dev for a copy of the current Drupal DB, as well as their config.yml file.
 - Using the other dev's config.yml file as a template, modify the config.yml file you copied from example.config.yml.
-- Get a recent mysql dump of the HID DB, rename it to "HIDGlobal.mysql," and put it in the "vplampd-stack-master/data" folder.
+- Get a recent mysql dump of the DB, modify the "database" section of the config.yml to suit the DB you're using, and put the DB in the "vplampd-stack-master/data" folder.
 - Create a ".drush" folder in your home directory.
 	In terminal:
 	mkdir ~/.drush
-- 	Ideally, you could also properly install drush on your host box, but that's not necessary for this process.
+	- Ideally, you could also properly install drush on your host box, but that's not necessary for this process.
 - In terminal, run "sudo vagrant up" inside the vplampd-stack-master folder.
 - If all works well, run the grunt build in order to use the current CSS / JS.
 	In terminal:
-	ssh vagrant@hidglobal.dev (password: vagrant)
+	ssh vagrant@[hostname] (password: vagrant)
 	cd [location of the new theme folder on the vagrant box]
 	nvm install 0.10.32; nvm use v0.10.32; rvm install 1.9.3; rvm use 1.9.3; npm install; CI=true bower install --allow-root; bundle install; grunt
-- Navigate to www.hidglobal.dev on your host box's browser
+- Navigate to the hostname in the config.yml file on your host box's browser
 - Clear Drupal cache (if needed)
 - Voila! All set!
 	
