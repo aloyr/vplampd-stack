@@ -23,20 +23,33 @@ git clone https://github.com/aloyr/vplampd-stack
 cd vplampd-stack
 ```
 
-- Move unzipped "vplampd-stack-master" folder to a place where you'd like to keep the new Vagrant build (ie, create something like /Users/[username]/vagrantbuilds and place it there...)
+- Move unzipped "vplampd-stack-master" folder to a place where you'd like to keep the new Vagrant build (ie, create something like /Users/[username]/workspace/vagrant and place it there...)
 - Navigate to where you put the vplampd-stack-master folder
 - Copy the example.config.yml file in that location, and make a copy called "config.yml"
 	In terminal:
-	cp {example.,config.yml}
-	vim config.yml
-- Ask a fellow dev for a copy of the current Drupal DB, as well as their config.yml file.
+
+```bash
+cp {example.,config.yml}
+vim config.yml
+```
+
+- Ask a fellow dev for a copy of the current **Drupal DB**, as well as their **config.yml** file.
 - Using the other dev's config.yml file as a template, modify the config.yml file you copied from example.config.yml.
 - Get a recent mysql dump of the DB, modify the "database" section of the config.yml to suit the DB you're using, and put the DB in the "vplampd-stack-master/data" folder.
 - Create a ".drush" folder in your home directory.
 	In terminal:
 	mkdir ~/.drush
 	- Ideally, you could also properly install drush on your host box, but that's not necessary for this process.
-- In terminal, run "sudo vagrant up" inside the vplampd-stack-master folder.
+	  - To install drush, use the following commands:
+
+```bash
+curl -sS https://getcomposer.org/installer | php
+sudo mv composer.phar /usr/bin/composer
+composer global require drush/drush:7.*
+```
+
+- In terminal, run `vagrant up` inside the vplampd-stack-master folder.
+  - If you get a permissions error, run `sudo chown -R $USER $HOME/.vagrant.d`, then run `vagrant up` again.
 - If all works well, run the grunt build in order to use the current CSS / JS.
 	In terminal:
 	ssh vagrant@[hostname] (password: vagrant)
