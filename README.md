@@ -12,7 +12,17 @@ Prerequisites
 
 Instructions
 	
-- Download the vplampd-stack: https://github.com/aloyr/vplampd-stack/archive/master.zip
+- Download the latest version of [vagrant](http://www.vagrantup.com/downloads.html)
+- Download the [vplampd-stack](https://github.com/aloyr/vplampd-stack/archive/master.zip)
+  -- Alternatively, clone the git repo with:
+
+```bash
+mkdir -p ~/workspace/vagrant 2> /dev/null
+cd ~/workspace/vagrant
+git clone https://github.com/aloyr/vplampd-stack
+cd vplampd-stack
+```
+
 - Move unzipped "vplampd-stack-master" folder to a place where you'd like to keep the new Vagrant build (ie, create something like /Users/[username]/vagrantbuilds and place it there...)
 - Navigate to where you put the vplampd-stack-master folder
 - Copy the example.config.yml file in that location, and make a copy called "config.yml"
