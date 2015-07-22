@@ -20,6 +20,7 @@ Instructions
 ssh-keygen # press <enter> until it is done
 cat ~/.ssh/id_rsa.pub | pbcopy # this will copy your public key to the pasteboard
 ```
+- Setup your SSH keys (cont'd)
   - Visit the [ssh keys page](https://github.com/settings/ssh) in github and click on **Add SSH Key**
   - Choose any name you'd like such as **work laptop** for the title field
   - Go to the **key field** and press ⌘-V to paste the ssh key you copied above
