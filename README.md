@@ -14,7 +14,7 @@ Instructions
 	
 - Download the latest version of [vagrant](http://www.vagrantup.com/downloads.html)
 - Download the [vplampd-stack](https://github.com/aloyr/vplampd-stack/archive/master.zip)
-  -- Alternatively, clone the git repo with:
+  - Alternatively, clone the git repo with:
 
 ```bash
 mkdir -p ~/workspace/vagrant 2> /dev/null
