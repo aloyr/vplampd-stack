@@ -68,10 +68,18 @@ composer global require drush/drush:7.*
 
 ```bash
 	ssh root@[hostname]
-```
 	cd [location of the new theme folder on the vagrant box]
-	nvm install 0.10.32; nvm use v0.10.32; rvm install 1.9.3; rvm use 1.9.3; npm install; CI=true bower install --allow-root; bundle install; grunt
-- Navigate to the hostname in the config.yml file on your host box's browser
+	nvm install 0.10.32
+	nvm use v0.10.32
+	rvm install 1.9.3
+	rvm use 1.9.3
+	npm install
+	CI=true bower install --allow-root
+	bundle install
+	grunt
+```
+
+- Navigate to the hostname defined in the config.yml file on your host box's browser
 - Clear Drupal cache (if needed)
 - Voila! All set!
 	
