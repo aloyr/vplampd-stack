@@ -3,7 +3,7 @@ vplampd-stack
 
 Vagrant, puppet, lamp, drupal, drush, xhprof, xdebug, memcache stack, based on CentOS 5.6
 
-Prerequisites
+## Prerequisites
 - You will need to have your ssh keys created and setup in github, if you havent done that yet
 - You will need 3 vagrant plugins, installed by running the following command in terminal:
 	sudo vagrant plugin install vagrant-cachier vagrant-hostsupdater vagrant-triggers
@@ -11,7 +11,7 @@ Prerequisites
  	https://www.virtualbox.org/wiki/Downloads
 - You will need to pull a branch of your site from github (ie, https://github.com/HID-GS/HID-Global), and place it in the location specified in the "shares" section of config.yml (ie,  ~/Sites/HID-Global/hid)
 
-Instructions
+## Instructions
 	
 - Setup your SSH keys
   - If you have nothing in the `~/.ssh` folder, run the following commands in terminal:
