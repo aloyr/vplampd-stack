@@ -53,7 +53,7 @@ vim config.yml
 	In terminal:
 	mkdir ~/.drush
 	- Ideally, you could also properly install drush on your host box, but that's not necessary for this process.
-	  - To install drush, use the following commands:
+	  - To install drush, use the following commands and **start a new terminal session for the changes to apply**:
 
 ```bash
 curl -sS https://getcomposer.org/installer | php
