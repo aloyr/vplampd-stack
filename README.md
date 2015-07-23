@@ -57,6 +57,8 @@ vim config.yml
 
 ```bash
 curl -sS https://getcomposer.org/installer | php
+sudo mkdir -p /usr/local/bin 2> /dev/null
+echo 'export PATH="$PATH:~/.composer/vendor/bin:/usr/local/bin"' >> ~/bash_profile
 sudo mv composer.phar /usr/bin/composer
 composer global require drush/drush:7.*
 ```
