@@ -25,19 +25,22 @@ class drush {
 		command => 'curl -sS https://getcomposer.org/installer \
 				   | php -d allow_url_fopen=On -- --filename=composer --install-dir=/usr/local/bin',
 		creates => '/usr/local/bin/composer',
-		require => [ Exec [ 'php_ini' ], Package [ $lamp::pear ], ],
+		require => [ Exec [ 'php_ini' ] ],
+		# require => [ Exec [ 'php_ini' ], Package [ $lamp::pear ], ],
 	}
 
 	exec { 'pear_Console_Table':
 		command => 'pear install Console_Table',
 		unless => 'pear list | grep Console_Table > /dev/null',
-		require => [ Exec [ 'php_ini' ], Package [ $lamp::pear ], ],
+		require => [ Exec [ 'php_ini' ], ],
+		# require => [ Exec [ 'php_ini' ], Package [ $lamp::pear ], ],
 	}
 
 	exec { 'drush':
 		command => 'git clone -b 5.x https://github.com/drush-ops/drush.git /opt/local/drush',
 		creates => '/opt/local/drush',
-		require => [ Exec [ 'composer', 'pear_Console_Table' ], Package [ 'git' ], ],
+		require => [ Exec [ 'composer', 'pear_Console_Table' ], ],
+		# require => [ Exec [ 'composer', 'pear_Console_Table' ], Package [ 'git' ], ],
 	}
 
 	file { '/usr/local/bin/drush':
