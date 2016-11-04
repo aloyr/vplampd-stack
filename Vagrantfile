@@ -182,7 +182,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   if Vagrant.has_plugin?("vagrant-cachier")
     config.cache.scope = :box
     config.cache.auto_detect = false
-    config.cache.enable :yum
+    # config.cache.enable :yum
     # config.cache.enable :npm
 
     # config.cache.synced_folder_opts = {
