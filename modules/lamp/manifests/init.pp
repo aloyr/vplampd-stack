@@ -1,12 +1,12 @@
 class lamp {
 
 	if $operatingsystem == 'CentOS' {
-		$pear = $operatingsystemmajrelease ? {
-			'5' => 'php54-pear',
-			'6' => 'php55u-pear',
-		}
-		case $operatingsystemmajrelease {
-			5: {
+		# $pear = $operatingsystemmajrelease ? {
+		# 	'5' => 'php54-pear',
+		# 	'6' => 'php55u-pear',
+		# }
+		# case $operatingsystemmajrelease {
+		# 	5: {
 				$web = [ 'httpd',
 					 'memcached',
 					 'php54',
@@ -32,35 +32,35 @@ class lamp {
 				$database = [ 'mysql51-mysql-server', 'mysql51-mysql' ]
 				$dbservice = 'mysql51-mysqld'
 				$dbcnf = '/opt/rh/mysql51/root/etc/my.cnf'
-			}
-			6: {
-				$web = [ 'httpd',
-					 'memcached',
-					 'php55u',
-					 'php55u-cli',
-					 'php55u-gd',
-					 'php55u-odbc',
-					 'php55u-pdo',
-					 'php55u-pear',
-					 'php55u-pecl-apcu',
-					 'php55u-pecl-imagick',
-					 'php55u-pecl-jsonc',
-					 'php55u-pecl-memcache',
-					 'php55u-pecl-xdebug',
-					 'php55u-process',
-					 'php55u-xml',
-					 'redis',
-					 'varnish',
-				   ]
-				$database = [ 'MariaDB-server', 'MariaDB-client' ]
-				$dbservice = 'mysql'
-        $dbcnf = '/etc/my.cnf'
-			}
-		}
-		package { $web:
-			ensure => installed,
-			require => Exec[ 'ius-archive' ],
-		}
+		# 	}
+		# 	6: {
+		# 		$web = [ 'httpd',
+		# 			 'memcached',
+		# 			 'php55u',
+		# 			 'php55u-cli',
+		# 			 'php55u-gd',
+		# 			 'php55u-odbc',
+		# 			 'php55u-pdo',
+		# 			 'php55u-pear',
+		# 			 'php55u-pecl-apcu',
+		# 			 'php55u-pecl-imagick',
+		# 			 'php55u-pecl-jsonc',
+		# 			 'php55u-pecl-memcache',
+		# 			 'php55u-pecl-xdebug',
+		# 			 'php55u-process',
+		# 			 'php55u-xml',
+		# 			 'redis',
+		# 			 'varnish',
+		# 		   ]
+		# 		$database = [ 'MariaDB-server', 'MariaDB-client' ]
+		# 		$dbservice = 'mysql'
+  #       $dbcnf = '/etc/my.cnf'
+		# 	}
+		# }
+		# package { $web:
+		# 	ensure => installed,
+		# 	require => Exec[ 'ius-archive' ],
+		# }
 
 		exec { 'php_ini':
 			command => "sed -i \\
@@ -77,7 +77,7 @@ class lamp {
 						    -e 's/^\\(max_execution_time\\) = [0-9]\\+/\\1 = 300/g' \\
 						    /etc/php.ini",
 			unless => 'grep "^memory_limit = 2048M" /etc/php.ini',
-			require => Package [ $web ],
+			# require => Package [ $web ],
 		}
 
     if $operatingsystemmajrelease == 5 {
@@ -85,7 +85,7 @@ class lamp {
   			command => "echo 'apc.realpath_cache_size=256k' >> /etc/php.d/apc.ini; \\
   			            echo 'apc.realpath_cache_ttl=86400' >> /etc/php.d/apc.ini;",
   			unless => 'grep "realpath_cache" /etc/php.d/apc.ini',
-  			require => Exec [ 'apc_ini' ],
+  			# require => Exec [ 'apc_ini' ],
   		}
   
   		exec { 'apc_ini':
@@ -94,7 +94,8 @@ class lamp {
   						    -e 's/^;\\(apc.shm_size\\)=.*/\\1=256M/g' \\
   						    /etc/php.d/apc.ini",
   			unless => 'grep "^apc.enabled=1" /etc/php.d/apc.ini',
-  			require => [ Package [ $web ], Exec [ 'php_ini' ] ],
+  			require => Exec [ 'php_ini' ],
+  			# require => [ Package [ $web ], Exec [ 'php_ini' ] ],
   		}
     }
     else {
@@ -111,18 +112,19 @@ class lamp {
   						    -e 's/^;\\(apc.shm_size\\)=.*/\\1=256M/g' \\
   						    /etc/php.d/apcu.ini",
   			unless => 'grep "^apc.enabled=1" /etc/php.d/apcu.ini',
-  			require => [ Package [ $web ], Exec [ 'php_ini' ] ],
+  			require => Exec [ 'php_ini' ],
+  			# require => [ Package [ $web ], Exec [ 'php_ini' ] ],
   		}
     }
   
-		commontools::yumgroup { '"Development Tools"':
-			ensure => installed,
-			require => Exec [ 'selinux-off-2' ],
-		} ~>
+		# commontools::yumgroup { '"Development Tools"':
+		# 	ensure => installed,
+		# 	require => Exec [ 'selinux-off-2' ],
+		# } ~>
 		exec { 'xhprof_setup':
 			command => 'pecl install xhprof-beta ; echo "extension=xhprof.so" > /etc/php.d/xhprof.ini',
 			creates => '/etc/php.d/xhprof.ini',
-			require => Package [ $web ],
+			# require => Package [ $web ],
 		}
 
 		exec { 'xdebug_setup': 
@@ -132,37 +134,49 @@ class lamp {
 						echo "xdebug.remote_autostart=1" >> /etc/php.d/xdebug.ini; \
 						echo "xdebug.max_nesting_level=500" >> /etc/php.d/xdebug.ini;',
 			unless => 'grep "remote_enable" /etc/php.d/xdebug.ini',
-			require => Package [ $web ],
+			# require => Package [ $web ],
 		}
 		exec { 'uploadprogress_setup':
 			command => 'pecl install uploadprogress ; echo "extension=uploadprogress.so" > /etc/php.d/uploadprogress.ini',
 			creates => '/etc/php.d/uploadprogress.ini',
-			require => Package [ $web ],
+			# require => Package [ $web ],
 		}
 
 		if $operatingsystemmajrelease == 6 {
 			exec { 'install_redis_pecl':
 				command => 'pecl install redis',
 				creates => '/usr/lib64/php/modules/',
-				require => Package [ $web ],
+				# require => Package [ $web ],
 			} 
-			exec { 'create_redis_ini':
-				command => 'echo "extension=redis.so" > /etc/php.d/redis.ini',
-				creates => '/etc/php.d/redis.ini',
-				require => Exec [ 'install_redis_pecl' ],
-			} 
+			# exec { 'create_redis_ini':
+			# 	command => 'echo "extension=redis.so" > /etc/php.d/redis.ini',
+			# 	creates => '/etc/php.d/redis.ini',
+			# 	# require => Exec [ 'install_redis_pecl' ],
+			# } 
 		}
 
-		package { $database:
-			ensure => installed,
-			require => Package[ $web ],
-		}
+		# package { $database:
+		# 	ensure => installed,
+		# 	require => Package[ $web ],
+		# }
+
+		exec { 'mysql_server': 
+		  command => "rpm -Uvh /vagrant/modules/lamp/files/mysql51-mysql-server-5.1.70-1.el5.x86_64.rpm",
+		  creates => '/etc/init.d/mysql51-mysqld',
+	  }
 
 		file { 'mysql_folder':
 			path => '/etc/mysql',
 			ensure => directory,
-			require => Package [ $database ],
+			# require => Package [ $database ],
+			require => Exec [ 'mysql_server' ],
 		}
+    file { '/var/log/mysql_slow_queries.log':
+      ensure => file,
+      require => File['mysql_folder'],
+      owner => 'mysql',
+      group => 'mysql',
+    }
 		file { 'mysql_optimizations':
 			path => '/etc/mysql/mysql_optimizations.cnf',
 			ensure => file,
@@ -185,7 +199,7 @@ class lamp {
 			ensure => file,
 			path => sprintf("/etc/httpd/conf.d/%s.conf", $webhost),
 			content => template('lamp/apache_site.erb'),
-			require => Package [ $web ],
+			# require => Package [ $web ],
 		}
 
 		$webservicesreq = defined('$webrootparsed') ? {
@@ -195,7 +209,8 @@ class lamp {
 		service { 'httpd':
 			ensure => running,
 			enable => true,
-			require => [ Exec [ $webservicesreq, php_ini, apc_ini ], Package [ $web ], File [ 'http_site' ] ],
+			require => [ Exec [ $webservicesreq, php_ini, apc_ini ], File [ 'http_site' ] ],
+			# require => [ Exec [ $webservicesreq, php_ini, apc_ini ], Package [ $web ], File [ 'http_site' ] ],
 		}
 
 		exec { 'http_restart':
@@ -218,7 +233,8 @@ class lamp {
 		service { $dbservice:
 			ensure => running,
 			enable => true,
-			require => [ Exec [ 'selinux-off-2', 'mysql_include' ], Package [ $database ] ],
+			require => [ Exec [ 'selinux-off-2', 'mysql_include', 'mysql_server' ] ],
+			# require => [ Exec [ 'selinux-off-2', 'mysql_include' ], Package [ $database ] ],
 		}
 
 		if defined('$dbname') {
@@ -275,7 +291,7 @@ class lamp {
 			exec { 'reset_webroot':
 				command => "sed -i 's/\\/var\\/www\\/html/$webrootparsed/g' /etc/httpd/conf/httpd.conf",
 				onlyif => "grep '/var/www/html'  /etc/httpd/conf/httpd.conf",
-				require => Package [ 'httpd' ],
+				# require => Package [ 'httpd' ],
 			}
 
 			drush::filehttp { 'htaccess':
