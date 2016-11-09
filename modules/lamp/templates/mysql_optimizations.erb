@@ -1,24 +1,25 @@
 [mysqld]
-key_buffer = 16M
-max_allowed_packet = 16M
-table_cache = 64
-sort_buffer_size = 512K
-net_buffer_length = 8K
-read_buffer_size = 256K
-read_rnd_buffer_size = 512K
-myisam_sort_buffer_size = 8M
-
-table_cache = 8192
-table_open_cache = 8192
-table_definition_cache = 8192
-query_cache_size = 512M
-query_cache_limit = 16M
-thread_cache_size = 5
-innodb_thread_concurrency = 5
-innodb_buffer_pool_size = 2G
-key_buffer_size = 50M
-log-slow-queries = /var/log/mysql_slow_queries.log
-innodb_flush_log_at_trx_commit = 2
-innodb_flush_method=O_DIRECT
 default-storage-engine=InnoDB
 default-table-type=InnoDB
+innodb_thread_concurrency = 5
+innodb_buffer_pool_size = 2G
+innodb_flush_log_at_trx_commit = 2
+innodb_flush_method=O_DIRECT
+key_buffer = 16M
+key_buffer_size = 50M
+log-slow-queries = /var/log/mysql_slow_queries.log
+long_query_time=1
+max_allowed_packet = 32M
+myisam_sort_buffer_size = 8M
+net_buffer_length = 8K
+query_cache_size = 512M
+query_cache_limit = 16M
+query_cache_type = 1
+read_buffer_size = 256K
+read_rnd_buffer_size = 512K
+sort_buffer_size = 512K
+table_cache = 8192
+table_definition_cache = 8192
+table_open_cache = 8192
+thread_cache_size = 5
+
