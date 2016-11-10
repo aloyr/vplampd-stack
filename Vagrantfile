@@ -240,7 +240,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   settings['shares'].each do |item|
     if item['vm'] == settings['webroot']
       settings['local'] = item['local'] #if item['vm'] == settings['webroot']
-      config.vm.synced_folder item['local'], item['vm'], type: 'rsync', rsync__exclude: ['.git/','*/bower_components','*/node_modules'], rsync__auto: true
+      config.vm.synced_folder item['local'], item['vm'], type: 'rsync', rsync__exclude: ['.git/','*/bower_components','*/node_modules','*/files'], rsync__auto: true
       #config.vm.synced_folder item['local'], item['vm'], mount_options: ["dmode=777,fmode=766,uid=48,gid=48"]
     else
       config.vm.synced_folder item['local'], item['vm'], mount_options: ["dmode=777,fmode=766,uid=48,gid=48"]
