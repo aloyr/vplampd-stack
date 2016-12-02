@@ -19,6 +19,7 @@ aliases:
 # setup additional hosts that point to the same apache site
 # used to configure a multi-language site build
 languages:
+  - {"en": "www.example.dev"}
   - {"de": "de.example.dev"}
   - {"es": "es.example.dev"}
   - {"fr": "fr.example.dev"}
